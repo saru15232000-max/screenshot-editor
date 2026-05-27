@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
   Download, UploadCloud, RotateCcw, RotateCw, FlipHorizontal, FlipVertical,
   Image as ImageIcon, Check, Layers, RefreshCw, Trash2, Plus,
-  Bold, Italic, AlignLeft, AlignCenter, AlignRight, Eraser, Undo2, Pipette,
+  Bold, Italic, AlignLeft, AlignCenter, AlignRight, Eraser, Undo2, Pipette, ScanSearch,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -44,12 +44,33 @@ const PRESETS = [
   { name: 'Dramatic', filter: { ...DEFAULT_ADJUSTMENTS, contrast: 140, brightness: 90, saturation: 120 } },
 ];
 
-const FONT_FAMILIES = [
-  { label: 'Sans Serif', value: 'Inter, Arial, sans-serif' },
-  { label: 'Serif',      value: 'Georgia, "Times New Roman", serif' },
-  { label: 'Monospace',  value: '"Courier New", Courier, monospace' },
-  { label: 'Impact',     value: 'Impact, Haettenschweiler, sans-serif' },
-  { label: 'Cursive',    value: 'Georgia, cursive' },
+const FONT_FAMILIES: { label: string; value: string; group: string; traits: string[] }[] = [
+  // — Sans-serif —
+  { label: 'Inter',            value: 'Inter, sans-serif',                  group: 'Sans-serif', traits: ['sans', 'regular'] },
+  { label: 'Roboto',           value: 'Roboto, sans-serif',                 group: 'Sans-serif', traits: ['sans', 'regular'] },
+  { label: 'Open Sans',        value: '"Open Sans", sans-serif',            group: 'Sans-serif', traits: ['sans', 'regular'] },
+  { label: 'Lato',             value: 'Lato, sans-serif',                   group: 'Sans-serif', traits: ['sans', 'light'] },
+  { label: 'Montserrat',       value: 'Montserrat, sans-serif',             group: 'Sans-serif', traits: ['sans', 'bold'] },
+  { label: 'Poppins',          value: 'Poppins, sans-serif',                group: 'Sans-serif', traits: ['sans', 'rounded', 'bold'] },
+  { label: 'Nunito',           value: 'Nunito, sans-serif',                 group: 'Sans-serif', traits: ['sans', 'rounded'] },
+  { label: 'Raleway',          value: 'Raleway, sans-serif',                group: 'Sans-serif', traits: ['sans', 'light'] },
+  { label: 'Oswald',           value: 'Oswald, sans-serif',                 group: 'Sans-serif', traits: ['sans', 'condensed', 'bold'] },
+  // — Serif —
+  { label: 'Georgia',          value: 'Georgia, serif',                     group: 'Serif',      traits: ['serif', 'regular'] },
+  { label: 'Playfair Display', value: '"Playfair Display", serif',          group: 'Serif',      traits: ['serif', 'elegant'] },
+  { label: 'Merriweather',     value: 'Merriweather, serif',                group: 'Serif',      traits: ['serif', 'bold'] },
+  { label: 'Lora',             value: 'Lora, serif',                        group: 'Serif',      traits: ['serif', 'regular'] },
+  // — Display —
+  { label: 'Impact',           value: 'Impact, sans-serif',                 group: 'Display',    traits: ['display', 'condensed', 'bold'] },
+  { label: 'Bebas Neue',       value: '"Bebas Neue", sans-serif',           group: 'Display',    traits: ['display', 'condensed', 'bold'] },
+  // — Monospace —
+  { label: 'Courier New',      value: '"Courier New", monospace',           group: 'Monospace',  traits: ['mono', 'serif', 'regular'] },
+  { label: 'Roboto Mono',      value: '"Roboto Mono", monospace',           group: 'Monospace',  traits: ['mono', 'sans', 'regular'] },
+  { label: 'Space Mono',       value: '"Space Mono", monospace',            group: 'Monospace',  traits: ['mono', 'bold'] },
+  // — Script / Cursive —
+  { label: 'Pacifico',         value: 'Pacifico, cursive',                  group: 'Script',     traits: ['script', 'rounded', 'bold'] },
+  { label: 'Dancing Script',   value: '"Dancing Script", cursive',          group: 'Script',     traits: ['script', 'light'] },
+  { label: 'Lobster',          value: 'Lobster, cursive',                   group: 'Script',     traits: ['script', 'bold'] },
 ];
 
 const TEXT_TEMPLATES = [
@@ -69,6 +90,127 @@ const PRESET_COLORS = [
 ];
 
 function genId() { return Math.random().toString(36).slice(2, 10); }
+
+// ── Font analyzer ─────────────────────────────────────────────────────────────
+
+/**
+ * Samples a 240×90 region around the click point on the offscreen canvas,
+ * measures ink density, stroke width, serif notches, and condensedness,
+ * then scores every font in FONT_FAMILIES and returns the top 3 matches.
+ */
+function analyzeFontFromImage(
+  off: HTMLCanvasElement,
+  canvas: HTMLCanvasElement,
+  clickX: number,
+  clickY: number,
+): Array<{ value: string; label: string; confidence: number }> {
+  const scaleX = off.width / canvas.width;
+  const scaleY = off.height / canvas.height;
+  const cx = Math.round(clickX * scaleX);
+  const cy = Math.round(clickY * scaleY);
+
+  const W = 240, H = 90;
+  const x0 = Math.max(0, cx - W / 2);
+  const y0 = Math.max(0, cy - H / 2);
+  const x1 = Math.min(off.width,  x0 + W);
+  const y1 = Math.min(off.height, y0 + H);
+  const w  = x1 - x0, h = y1 - y0;
+  if (w < 10 || h < 10) return [];
+
+  const offCtx = off.getContext('2d')!;
+  const raw    = offCtx.getImageData(x0, y0, w, h).data;
+
+  // Grayscale luma
+  const gray = new Uint8Array(w * h);
+  for (let i = 0; i < w * h; i++) {
+    gray[i] = Math.round(0.299 * raw[i * 4] + 0.587 * raw[i * 4 + 1] + 0.114 * raw[i * 4 + 2]);
+  }
+
+  const mean = gray.reduce((a, v) => a + v, 0) / gray.length;
+  const isInk = (v: number) => (mean > 128 ? v < mean - 30 : v > mean + 30);
+
+  let inkCount = 0;
+  let hRunTotal = 0, hRunCount = 0;
+  let vRunTotal = 0, vRunCount = 0;
+  let serifEdges = 0;
+  const topBand  = Math.floor(h * 0.2);
+  const botBand  = Math.floor(h * 0.8);
+
+  // Horizontal runs (stroke width proxy)
+  for (let row = 0; row < h; row++) {
+    let inRun = false, runLen = 0;
+    for (let col = 0; col < w; col++) {
+      if (isInk(gray[row * w + col])) {
+        inkCount++; if (!inRun) { inRun = true; runLen = 1; } else runLen++;
+      } else {
+        if (inRun) { hRunTotal += runLen; hRunCount++; inRun = false; }
+      }
+    }
+    if (inRun) { hRunTotal += runLen; hRunCount++; }
+
+    // Short horizontal runs at letter tops/bottoms → serif indicator
+    if (row < topBand || row > botBand) {
+      inRun = false; runLen = 0;
+      for (let col = 0; col < w; col++) {
+        if (isInk(gray[row * w + col])) {
+          if (!inRun) { inRun = true; runLen = 1; } else runLen++;
+        } else {
+          if (inRun) { if (runLen >= 2 && runLen <= 8) serifEdges++; inRun = false; }
+        }
+      }
+    }
+  }
+
+  // Vertical runs (letter height proxy)
+  for (let col = 0; col < w; col++) {
+    let inRun = false, runLen = 0;
+    for (let row = 0; row < h; row++) {
+      if (isInk(gray[row * w + col])) {
+        if (!inRun) { inRun = true; runLen = 1; } else runLen++;
+      } else {
+        if (inRun) { vRunTotal += runLen; vRunCount++; inRun = false; }
+      }
+    }
+    if (inRun) { vRunTotal += runLen; vRunCount++; }
+  }
+
+  const inkRatio      = inkCount / (w * h);
+  const avgH          = hRunCount > 0 ? hRunTotal / hRunCount : 1;
+  const avgV          = vRunCount > 0 ? vRunTotal / vRunCount : 1;
+  const serifScore    = serifEdges / Math.max(1, hRunCount + vRunCount);
+  const condensed     = avgH / Math.max(1, avgV); // low = condensed
+  const isBold        = inkRatio > 0.22 || avgH > 6;
+  const isLight       = inkRatio < 0.10;
+  const isSerif       = serifScore > 0.06;
+  const isCondensed   = condensed < 0.55;
+  const isScript      = serifScore < 0.03 && inkRatio > 0.12 && !isCondensed && avgH > 3;
+  const isMono        = Math.abs(condensed - 0.5) < 0.12;
+
+  const scored = FONT_FAMILIES.map(f => {
+    let s = 0;
+    if (isSerif  && f.traits.includes('serif'))              s += 3;
+    if (!isSerif && !f.traits.includes('serif') &&
+        !f.traits.includes('mono') && !f.traits.includes('script')) s += 2;
+    if (isBold   && (f.traits.includes('bold') || f.traits.includes('display'))) s += 2;
+    if (isLight  && f.traits.includes('light'))              s += 2;
+    if (isCondensed && f.traits.includes('condensed'))       s += 3;
+    if (isScript && f.traits.includes('script'))             s += 4;
+    if (isMono   && f.traits.includes('mono'))               s += 3;
+    // Penalise obvious mismatches
+    if (isScript && f.traits.includes('serif'))              s -= 2;
+    if (!isSerif && f.traits.includes('serif'))              s -= 1;
+    if (isCondensed && f.traits.includes('rounded'))         s -= 1;
+    return { value: f.value, label: f.label, score: s };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  const top3 = scored.slice(0, 3);
+  const maxS = top3[0]?.score ?? 1;
+  return top3.map((f, i) => ({
+    value: f.value, label: f.label,
+    confidence: Math.round(Math.max(20, maxS > 0 ? (f.score / maxS) * (75 - i * 15) : 35)),
+  }));
+}
 
 // ── Retouch helpers ───────────────────────────────────────────────────────────
 
@@ -145,6 +287,8 @@ export default function Editor() {
   const [italic, setItalic]           = useState(false);
   const [textAlign, setTextAlign]     = useState<'left' | 'center' | 'right'>('left');
   const [textOpacity, setTextOpacity] = useState(100);
+  const [fontAnalyzerActive, setFontAnalyzerActive] = useState(false);
+  const [fontSuggestions, setFontSuggestions] = useState<Array<{ value: string; label: string; confidence: number }>>([]);
 
   // Retouch
   const [retouchActive, setRetouchActive]     = useState(false);
@@ -357,6 +501,20 @@ export default function Editor() {
       setTextColorEyedropper(false);
       return;
     }
+    // Font analyzer: sample region and score fonts
+    if (fontAnalyzerActive) {
+      const off = offCanvasRef.current;
+      const canvas = canvasRef.current;
+      if (off && canvas) {
+        const rect = canvas.getBoundingClientRect();
+        const cx = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const cy = (e.clientY - rect.top)  * (canvas.height / rect.height);
+        const results = analyzeFontFromImage(off, canvas, cx, cy);
+        setFontSuggestions(results);
+      }
+      setFontAnalyzerActive(false);
+      return;
+    }
     if (!textTool) return;
     const { x, y } = canvasToPixel(e.clientX, e.clientY);
     const id = genId();
@@ -505,7 +663,7 @@ export default function Editor() {
   };
 
   // ── Cursor for active modes ───────────────────────────────────────────────
-  const canvasCursor = eyedropperActive || textColorEyedropper ? 'crosshair' : retouchActive ? 'cell' : textTool ? 'crosshair' : 'default';
+  const canvasCursor = eyedropperActive || textColorEyedropper || fontAnalyzerActive ? 'crosshair' : retouchActive ? 'cell' : textTool ? 'crosshair' : 'default';
 
   // ── Landing screen ────────────────────────────────────────────────────────
   if (!imageFile) {
@@ -640,6 +798,13 @@ export default function Editor() {
                 className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-card border border-primary/40 rounded-full px-4 py-2 text-sm text-primary shadow-lg flex items-center gap-2">
                 <Pipette className="w-4 h-4" />
                 Click on any colour in the image to use it for your text
+              </motion.div>
+            )}
+            {fontAnalyzerActive && (
+              <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
+                className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-card border border-primary/40 rounded-full px-4 py-2 text-sm text-primary shadow-lg flex items-center gap-2">
+                <ScanSearch className="w-4 h-4" />
+                Click directly on the text in the image to analyze its style
               </motion.div>
             )}
           </AnimatePresence>
@@ -803,11 +968,63 @@ export default function Editor() {
                         placeholder="Enter your text..." data-testid="input-text-content" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs text-muted-foreground">Font</label>
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs text-muted-foreground">Font</label>
+                        <Button
+                          variant={fontAnalyzerActive ? 'default' : 'ghost'}
+                          size="sm"
+                          className="h-6 px-2 text-xs gap-1"
+                          onClick={() => { setFontAnalyzerActive(v => !v); setFontSuggestions([]); }}
+                          data-testid="button-font-analyzer"
+                        >
+                          <ScanSearch className="w-3 h-3" />
+                          {fontAnalyzerActive ? 'Click on text…' : 'Analyze from image'}
+                        </Button>
+                      </div>
+
+                      {/* Font analyzer results */}
+                      {fontSuggestions.length > 0 && (
+                        <div className="space-y-1.5 p-2 bg-background rounded-md border border-border">
+                          <p className="text-xs text-muted-foreground font-medium">Best matches:</p>
+                          {fontSuggestions.map((s, i) => (
+                            <button
+                              key={s.value}
+                              onClick={() => setFontFamily(s.value)}
+                              className={`w-full flex items-center justify-between px-2 py-1.5 rounded text-left text-sm transition-colors hover:bg-primary/10 ${fontFamily === s.value ? 'bg-primary/15 text-primary' : ''}`}
+                              style={{ fontFamily: s.value }}
+                            >
+                              <span>{s.label}</span>
+                              <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                                <div className="h-1.5 rounded-full bg-primary/30 overflow-hidden" style={{ width: 40 }}>
+                                  <div className="h-full bg-primary rounded-full" style={{ width: `${s.confidence}%` }} />
+                                </div>
+                                <span className="text-xs text-muted-foreground w-8 text-right">{s.confidence}%</span>
+                                {i === 0 && <span className="text-xs text-primary font-medium">Best</span>}
+                              </div>
+                            </button>
+                          ))}
+                          <button onClick={() => setFontSuggestions([])} className="text-xs text-muted-foreground hover:text-foreground w-full text-right pt-0.5">Dismiss</button>
+                        </div>
+                      )}
+
+                      {/* Font selector grouped by category */}
                       <Select value={fontFamily} onValueChange={setFontFamily}>
-                        <SelectTrigger className="h-9 bg-background text-sm" data-testid="select-font-family"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          {FONT_FAMILIES.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
+                        <SelectTrigger className="h-9 bg-background text-sm" data-testid="select-font-family">
+                          <SelectValue>
+                            <span style={{ fontFamily }}>{FONT_FAMILIES.find(f => f.value === fontFamily)?.label ?? fontFamily}</span>
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent className="max-h-72">
+                          {['Sans-serif', 'Serif', 'Display', 'Monospace', 'Script'].map(group => (
+                            <React.Fragment key={group}>
+                              <div className="px-2 py-1 text-xs text-muted-foreground font-semibold uppercase tracking-wider border-b border-border mt-1">{group}</div>
+                              {FONT_FAMILIES.filter(f => f.group === group).map(f => (
+                                <SelectItem key={f.value} value={f.value}>
+                                  <span style={{ fontFamily: f.value }}>{f.label}</span>
+                                </SelectItem>
+                              ))}
+                            </React.Fragment>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
