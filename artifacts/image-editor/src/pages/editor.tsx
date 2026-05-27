@@ -139,7 +139,8 @@ export default function Editor() {
   const [textInput, setTextInput]     = useState('Your text here');
   const [fontSize, setFontSize]       = useState(48);
   const [fontFamily, setFontFamily]   = useState(FONT_FAMILIES[0].value);
-  const [textColor, setTextColor]     = useState('#ffffff');
+  const [textColor, setTextColor]         = useState('#ffffff');
+  const [textColorEyedropper, setTextColorEyedropper] = useState(false);
   const [bold, setBold]               = useState(false);
   const [italic, setItalic]           = useState(false);
   const [textAlign, setTextAlign]     = useState<'left' | 'center' | 'right'>('left');
@@ -336,6 +337,26 @@ export default function Editor() {
 
   const handleCanvasClick = (e: React.MouseEvent) => {
     if (eyedropperActive) { handleEyedropper(e); return; }
+    // Text color eyedropper: sample pixel and apply to text color
+    if (textColorEyedropper) {
+      const off = offCanvasRef.current;
+      const canvas = canvasRef.current;
+      if (off && canvas) {
+        const rect = canvas.getBoundingClientRect();
+        const cx = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const cy = (e.clientY - rect.top)  * (canvas.height / rect.height);
+        const offCtx = off.getContext('2d')!;
+        const px = offCtx.getImageData(
+          Math.round(cx * (off.width / canvas.width)),
+          Math.round(cy * (off.height / canvas.height)),
+          1, 1
+        ).data;
+        const hex = '#' + [px[0], px[1], px[2]].map(v => v.toString(16).padStart(2, '0')).join('');
+        setTextColor(hex);
+      }
+      setTextColorEyedropper(false);
+      return;
+    }
     if (!textTool) return;
     const { x, y } = canvasToPixel(e.clientX, e.clientY);
     const id = genId();
@@ -484,7 +505,7 @@ export default function Editor() {
   };
 
   // ── Cursor for active modes ───────────────────────────────────────────────
-  const canvasCursor = eyedropperActive ? 'crosshair' : retouchActive ? 'cell' : textTool ? 'crosshair' : 'default';
+  const canvasCursor = eyedropperActive || textColorEyedropper ? 'crosshair' : retouchActive ? 'cell' : textTool ? 'crosshair' : 'default';
 
   // ── Landing screen ────────────────────────────────────────────────────────
   if (!imageFile) {
@@ -611,7 +632,14 @@ export default function Editor() {
             {retouchActive && (
               <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
                 className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-card border border-primary/40 rounded-full px-4 py-2 text-sm text-primary shadow-lg">
-                Paint over text to remove it — click Retouch again to exit
+                Paint over text to remove it — click the button again to exit
+              </motion.div>
+            )}
+            {textColorEyedropper && (
+              <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
+                className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-card border border-primary/40 rounded-full px-4 py-2 text-sm text-primary shadow-lg flex items-center gap-2">
+                <Pipette className="w-4 h-4" />
+                Click on any colour in the image to use it for your text
               </motion.div>
             )}
           </AnimatePresence>
@@ -808,7 +836,27 @@ export default function Editor() {
                       <Slider value={[textOpacity]} min={10} max={100} step={1} onValueChange={([v]) => setTextOpacity(v)} data-testid="slider-text-opacity" />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs text-muted-foreground">Color</label>
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs text-muted-foreground">Color</label>
+                        <Button
+                          variant={textColorEyedropper ? 'default' : 'ghost'}
+                          size="sm"
+                          className="h-6 px-2 text-xs gap-1"
+                          onClick={() => setTextColorEyedropper(v => !v)}
+                          data-testid="button-text-color-eyedropper"
+                        >
+                          <Pipette className="w-3 h-3" />
+                          {textColorEyedropper ? 'Click image…' : 'Pick from image'}
+                        </Button>
+                      </div>
+                      {/* Sampled colour preview */}
+                      <div className="flex items-center gap-2 mb-1">
+                        <div
+                          className="w-7 h-7 rounded-full border-2 shrink-0"
+                          style={{ backgroundColor: textColor, borderColor: 'hsl(var(--border))' }}
+                        />
+                        <span className="text-xs font-mono text-muted-foreground">{textColor}</span>
+                      </div>
                       <div className="flex flex-wrap gap-2">
                         {PRESET_COLORS.map(c => (
                           <button key={c} onClick={() => setTextColor(c)}
