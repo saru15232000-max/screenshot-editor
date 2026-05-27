@@ -52,6 +52,17 @@ const FONT_FAMILIES = [
   { label: 'Cursive',    value: 'Georgia, cursive' },
 ];
 
+const TEXT_TEMPLATES = [
+  { name: 'Bold Headline', fontFamily: 'Impact, Haettenschweiler, sans-serif', fontSize: 80, color: '#ffffff', bold: true,  italic: false, opacity: 100 },
+  { name: 'Watermark',     fontFamily: 'Inter, Arial, sans-serif',             fontSize: 40, color: '#ffffff', bold: false, italic: true,  opacity: 35  },
+  { name: 'Caption',       fontFamily: 'Inter, Arial, sans-serif',             fontSize: 28, color: '#ffffff', bold: false, italic: false, opacity: 95  },
+  { name: 'Subtitle',      fontFamily: 'Georgia, "Times New Roman", serif',    fontSize: 36, color: '#e2e8f0', bold: false, italic: true,  opacity: 100 },
+  { name: 'Stamp',         fontFamily: 'Impact, Haettenschweiler, sans-serif', fontSize: 60, color: '#ef4444', bold: true,  italic: false, opacity: 90  },
+  { name: 'Neon',          fontFamily: 'Impact, Haettenschweiler, sans-serif', fontSize: 64, color: '#4ade80', bold: true,  italic: false, opacity: 100 },
+  { name: 'Dark Label',    fontFamily: 'Inter, Arial, sans-serif',             fontSize: 32, color: '#000000', bold: true,  italic: false, opacity: 85  },
+  { name: 'Gold',          fontFamily: 'Georgia, "Times New Roman", serif',    fontSize: 48, color: '#facc15', bold: true,  italic: true,  opacity: 100 },
+];
+
 const PRESET_COLORS = [
   '#ffffff','#000000','#f87171','#fb923c','#facc15',
   '#4ade80','#60a5fa','#a78bfa','#f472b6','#e2e8f0',
@@ -59,67 +70,49 @@ const PRESET_COLORS = [
 
 function genId() { return Math.random().toString(36).slice(2, 10); }
 
-// ── Retouch helpers (pure canvas pixel ops) ──────────────────────────────────
+// ── Retouch helpers ───────────────────────────────────────────────────────────
 
-function boxBlurPass(src: Uint8ClampedArray, dst: Uint8ClampedArray, w: number, h: number, r: number) {
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      let rr = 0, gg = 0, bb = 0, aa = 0, cnt = 0;
-      for (let dy = -r; dy <= r; dy++) {
-        for (let dx = -r; dx <= r; dx++) {
-          const nx = x + dx, ny = y + dy;
-          if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
-          const i = (ny * w + nx) * 4;
-          rr += src[i]; gg += src[i+1]; bb += src[i+2]; aa += src[i+3];
-          cnt++;
-        }
-      }
-      const o = (y * w + x) * 4;
-      dst[o]   = rr / cnt;
-      dst[o+1] = gg / cnt;
-      dst[o+2] = bb / cnt;
-      dst[o+3] = aa / cnt;
-    }
-  }
-}
-
-function applyHealPatch(
+/**
+ * Samples pixels from a ring at the OUTSIDE edge of the brush circle,
+ * averages them into a background colour, then fills the interior solid.
+ * This gives a clean, blur-free result that hides text without smearing.
+ */
+function applyFillPatch(
   offCtx: CanvasRenderingContext2D,
   cx: number, cy: number,
   radius: number,
-  passes: number,
+  sampleRings: number,   // how many rings inward to sample (1-3)
 ) {
-  const x0 = Math.max(0, Math.floor(cx - radius));
-  const y0 = Math.max(0, Math.floor(cy - radius));
-  const x1 = Math.min(offCtx.canvas.width,  Math.ceil(cx + radius));
-  const y1 = Math.min(offCtx.canvas.height, Math.ceil(cy + radius));
-  const w = x1 - x0, h = y1 - y0;
-  if (w <= 0 || h <= 0) return;
+  const W = offCtx.canvas.width, H = offCtx.canvas.height;
+  const steps = Math.max(24, Math.round(2 * Math.PI * radius));
 
-  const imageData = offCtx.getImageData(x0, y0, w, h);
-  let src = new Uint8ClampedArray(imageData.data);
-  let dst = new Uint8ClampedArray(imageData.data.length);
-
-  for (let p = 0; p < passes; p++) {
-    boxBlurPass(src, dst, w, h, Math.min(radius, 8));
-    // Only blend inside the circle
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const px = x0 + x - cx, py = y0 + y - cy;
-        const dist = Math.sqrt(px * px + py * py);
-        const t = Math.max(0, Math.min(1, 1 - dist / radius));
-        const i = (y * w + x) * 4;
-        dst[i]   = src[i]   * (1 - t) + dst[i]   * t;
-        dst[i+1] = src[i+1] * (1 - t) + dst[i+1] * t;
-        dst[i+2] = src[i+2] * (1 - t) + dst[i+2] * t;
-        dst[i+3] = src[i+3];
-      }
+  // Collect samples from 1-3 concentric rings just outside the fill area
+  let rr = 0, gg = 0, bb = 0, cnt = 0;
+  for (let ring = 0; ring < sampleRings; ring++) {
+    const sampleR = radius + 4 + ring * 3;
+    for (let i = 0; i < steps; i++) {
+      const angle = (i / steps) * 2 * Math.PI;
+      const sx = Math.round(cx + sampleR * Math.cos(angle));
+      const sy = Math.round(cy + sampleR * Math.sin(angle));
+      if (sx < 0 || sx >= W || sy < 0 || sy >= H) continue;
+      const px = offCtx.getImageData(sx, sy, 1, 1).data;
+      rr += px[0]; gg += px[1]; bb += px[2]; cnt++;
     }
-    [src, dst] = [dst, src];
   }
+  if (cnt === 0) return;
 
-  imageData.data.set(src);
-  offCtx.putImageData(imageData, x0, y0);
+  const avgR = Math.round(rr / cnt);
+  const avgG = Math.round(gg / cnt);
+  const avgB = Math.round(bb / cnt);
+
+  // Fill a circular patch with the averaged background colour
+  offCtx.save();
+  offCtx.beginPath();
+  offCtx.arc(cx, cy, radius, 0, 2 * Math.PI);
+  offCtx.clip();
+  offCtx.fillStyle = `rgb(${avgR},${avgG},${avgB})`;
+  offCtx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+  offCtx.restore();
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -286,7 +279,7 @@ export default function Editor() {
     const offCy = cy * offScaleY;
     const offRadius = brushSize * Math.max(offScaleX, offScaleY);
 
-    applyHealPatch(offCtx, offCx, offCy, offRadius, brushStrength);
+    applyFillPatch(offCtx, offCx, offCy, offRadius, brushStrength);
     drawFromOff();
   }, [brushSize, brushStrength, drawFromOff]);
 
@@ -683,6 +676,43 @@ export default function Editor() {
 
               {/* ── Text ── */}
               <TabsContent value="text" className="mt-0 space-y-5">
+                {/* Style Templates */}
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Style Templates</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    {TEXT_TEMPLATES.map(tpl => (
+                      <button
+                        key={tpl.name}
+                        onClick={() => {
+                          setFontFamily(tpl.fontFamily);
+                          setFontSize(tpl.fontSize);
+                          setTextColor(tpl.color);
+                          setBold(tpl.bold);
+                          setItalic(tpl.italic);
+                          setTextOpacity(tpl.opacity);
+                        }}
+                        className="bg-background border border-border rounded-lg px-3 py-2.5 text-left hover:border-primary hover:text-primary transition-colors"
+                        data-testid={`template-${tpl.name.toLowerCase().replace(/\s+/g, '-')}`}
+                      >
+                        <span
+                          className="block truncate text-sm"
+                          style={{
+                            fontFamily: tpl.fontFamily,
+                            fontWeight: tpl.bold ? 'bold' : 'normal',
+                            fontStyle: tpl.italic ? 'italic' : 'normal',
+                            color: tpl.color === '#000000' ? 'hsl(var(--foreground))' : tpl.color,
+                          }}
+                        >
+                          {tpl.name}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">{tpl.fontSize}px · {tpl.opacity < 100 ? `${tpl.opacity}% opacity` : tpl.bold ? 'Bold' : tpl.italic ? 'Italic' : 'Regular'}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="h-px bg-border" />
+
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Text Layers</h3>
@@ -780,7 +810,7 @@ export default function Editor() {
                 <div className="space-y-3">
                   <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Remove Text from Image</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Use the heal brush to paint over unwanted text or watermarks. The tool blends surrounding pixels to fill the area naturally.
+                    Paint over text or watermarks. The brush samples the background colour just outside the brush edge and fills solid — no blur, clean result. Then use the Text tab to place new text on top.
                   </p>
                 </div>
 
@@ -815,13 +845,13 @@ export default function Editor() {
                       onValueChange={([v]) => setBrushSize(v)} data-testid="slider-brush-size" />
                   </div>
 
-                  {/* Strength */}
+                  {/* Strength = sample rings 1-3 */}
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span>Strength</span>
-                      <span className="text-muted-foreground">{brushStrength === 1 ? 'Light' : brushStrength <= 3 ? 'Medium' : brushStrength <= 6 ? 'Strong' : 'Max'}</span>
+                      <span>Sample Accuracy</span>
+                      <span className="text-muted-foreground">{brushStrength === 1 ? 'Fast' : brushStrength === 2 ? 'Balanced' : 'Precise'}</span>
                     </div>
-                    <Slider value={[brushStrength]} min={1} max={10} step={1}
+                    <Slider value={[brushStrength]} min={1} max={3} step={1}
                       onValueChange={([v]) => setBrushStrength(v)} data-testid="slider-brush-strength" />
                   </div>
                 </div>
@@ -829,12 +859,17 @@ export default function Editor() {
                 <div className="bg-background border border-border rounded-lg p-3 space-y-1.5">
                   <p className="text-xs font-medium text-foreground">Tips for best results</p>
                   <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                    <li>Use a brush slightly larger than the text</li>
-                    <li>Paint with multiple short strokes</li>
-                    <li>Works best on simple / uniform backgrounds</li>
-                    <li>Increase Strength for stubborn text</li>
-                    <li>Use Undo if the result looks wrong</li>
+                    <li>Size brush to cover the text fully</li>
+                    <li>Works best on solid / uniform backgrounds</li>
+                    <li>Use Precise accuracy for gradient backgrounds</li>
+                    <li>After removing, go to Text tab to add new text</li>
+                    <li>Use Undo if the fill colour looks wrong</li>
                   </ul>
+                </div>
+
+                <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
+                  <p className="text-xs text-primary font-medium mb-1">Workflow tip</p>
+                  <p className="text-xs text-muted-foreground">Retouch to remove existing text → switch to the Text tab → pick a Style Template matching the original → type your new text on top.</p>
                 </div>
               </TabsContent>
 
