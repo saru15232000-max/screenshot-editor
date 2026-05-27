@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
   Download, UploadCloud, RotateCcw, RotateCw, FlipHorizontal, FlipVertical,
   Image as ImageIcon, Check, Layers, RefreshCw, Trash2, Plus,
-  Bold, Italic, AlignLeft, AlignCenter, AlignRight, Eraser, Undo2,
+  Bold, Italic, AlignLeft, AlignCenter, AlignRight, Eraser, Undo2, Pipette,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -73,44 +73,47 @@ function genId() { return Math.random().toString(36).slice(2, 10); }
 // ── Retouch helpers ───────────────────────────────────────────────────────────
 
 /**
- * Samples pixels from a ring at the OUTSIDE edge of the brush circle,
- * averages them into a background colour, then fills the interior solid.
- * This gives a clean, blur-free result that hides text without smearing.
+ * Fills a circular patch on the offscreen canvas with either:
+ *  - overrideColor: a user-eyedropped colour (most reliable)
+ *  - auto: samples from far outside the brush to estimate the background
  */
 function applyFillPatch(
   offCtx: CanvasRenderingContext2D,
   cx: number, cy: number,
   radius: number,
-  sampleRings: number,   // how many rings inward to sample (1-3)
+  overrideColor: string | null,
 ) {
-  const W = offCtx.canvas.width, H = offCtx.canvas.height;
-  const steps = Math.max(24, Math.round(2 * Math.PI * radius));
+  let fillStyle: string;
 
-  // Collect samples from 1-3 concentric rings just outside the fill area
-  let rr = 0, gg = 0, bb = 0, cnt = 0;
-  for (let ring = 0; ring < sampleRings; ring++) {
-    const sampleR = radius + 4 + ring * 3;
-    for (let i = 0; i < steps; i++) {
-      const angle = (i / steps) * 2 * Math.PI;
-      const sx = Math.round(cx + sampleR * Math.cos(angle));
-      const sy = Math.round(cy + sampleR * Math.sin(angle));
-      if (sx < 0 || sx >= W || sy < 0 || sy >= H) continue;
-      const px = offCtx.getImageData(sx, sy, 1, 1).data;
-      rr += px[0]; gg += px[1]; bb += px[2]; cnt++;
+  if (overrideColor) {
+    fillStyle = overrideColor;
+  } else {
+    // Auto mode: sample from well outside the brush (2x–3x radius) to avoid
+    // hitting the text pixels, which are typically inside/near the brush area.
+    const W = offCtx.canvas.width, H = offCtx.canvas.height;
+    const steps = Math.max(32, Math.round(2 * Math.PI * radius));
+    let rr = 0, gg = 0, bb = 0, cnt = 0;
+    // Three rings at 2x, 2.5x and 3x radius — far enough to clear most text
+    for (const mult of [2, 2.5, 3]) {
+      const sampleR = radius * mult;
+      for (let i = 0; i < steps; i++) {
+        const angle = (i / steps) * 2 * Math.PI;
+        const sx = Math.round(cx + sampleR * Math.cos(angle));
+        const sy = Math.round(cy + sampleR * Math.sin(angle));
+        if (sx < 0 || sx >= W || sy < 0 || sy >= H) continue;
+        const px = offCtx.getImageData(sx, sy, 1, 1).data;
+        rr += px[0]; gg += px[1]; bb += px[2]; cnt++;
+      }
     }
+    if (cnt === 0) return;
+    fillStyle = `rgb(${Math.round(rr / cnt)},${Math.round(gg / cnt)},${Math.round(bb / cnt)})`;
   }
-  if (cnt === 0) return;
 
-  const avgR = Math.round(rr / cnt);
-  const avgG = Math.round(gg / cnt);
-  const avgB = Math.round(bb / cnt);
-
-  // Fill a circular patch with the averaged background colour
   offCtx.save();
   offCtx.beginPath();
   offCtx.arc(cx, cy, radius, 0, 2 * Math.PI);
   offCtx.clip();
-  offCtx.fillStyle = `rgb(${avgR},${avgG},${avgB})`;
+  offCtx.fillStyle = fillStyle;
   offCtx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
   offCtx.restore();
 }
@@ -143,11 +146,13 @@ export default function Editor() {
   const [textOpacity, setTextOpacity] = useState(100);
 
   // Retouch
-  const [retouchActive, setRetouchActive] = useState(false);
-  const [brushSize, setBrushSize]         = useState(40);
-  const [brushStrength, setBrushStrength] = useState(5);   // blur passes
-  const [isRetouching, setIsRetouching]   = useState(false);
-  const [undoCount, setUndoCount]         = useState(0);    // triggers UI refresh
+  const [retouchActive, setRetouchActive]     = useState(false);
+  const [brushSize, setBrushSize]             = useState(40);
+  const [brushStrength, setBrushStrength]     = useState(2);
+  const [isRetouching, setIsRetouching]       = useState(false);
+  const [undoCount, setUndoCount]             = useState(0);
+  const [eyedropperActive, setEyedropperActive] = useState(false);
+  const [fillColor, setFillColor]             = useState<string | null>(null); // null = auto
 
   // Offscreen canvas holds pixel-edited image (retouch strokes baked in)
   const offCanvasRef  = useRef<HTMLCanvasElement | null>(null);
@@ -279,9 +284,9 @@ export default function Editor() {
     const offCy = cy * offScaleY;
     const offRadius = brushSize * Math.max(offScaleX, offScaleY);
 
-    applyFillPatch(offCtx, offCx, offCy, offRadius, brushStrength);
+    applyFillPatch(offCtx, offCx, offCy, offRadius, fillColor);
     drawFromOff();
-  }, [brushSize, brushStrength, drawFromOff]);
+  }, [brushSize, fillColor, drawFromOff]);
 
   const handleRetouchMouseDown = (e: React.MouseEvent) => {
     if (!retouchActive) return;
@@ -310,7 +315,27 @@ export default function Editor() {
   };
 
   // ── Text helpers ──────────────────────────────────────────────────────────
+  // ── Eyedropper: sample a pixel from the offscreen canvas ────────────────
+  const handleEyedropper = (e: React.MouseEvent) => {
+    const off = offCanvasRef.current;
+    const canvas = canvasRef.current;
+    if (!off || !canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const cx = (e.clientX - rect.left) * scaleX;
+    const cy = (e.clientY - rect.top)  * scaleY;
+    const offScaleX = off.width / canvas.width;
+    const offScaleY = off.height / canvas.height;
+    const offCtx = off.getContext('2d')!;
+    const px = offCtx.getImageData(Math.round(cx * offScaleX), Math.round(cy * offScaleY), 1, 1).data;
+    const hex = '#' + [px[0], px[1], px[2]].map(v => v.toString(16).padStart(2, '0')).join('');
+    setFillColor(hex);
+    setEyedropperActive(false);
+  };
+
   const handleCanvasClick = (e: React.MouseEvent) => {
+    if (eyedropperActive) { handleEyedropper(e); return; }
     if (!textTool) return;
     const { x, y } = canvasToPixel(e.clientX, e.clientY);
     const id = genId();
@@ -458,8 +483,8 @@ export default function Editor() {
     return { left: ann.x * (rect.width / canvas.width), top: ann.y * (rect.height / canvas.height) };
   };
 
-  // ── Cursor for retouch mode ───────────────────────────────────────────────
-  const canvasCursor = retouchActive ? 'crosshair' : textTool ? 'crosshair' : 'default';
+  // ── Cursor for active modes ───────────────────────────────────────────────
+  const canvasCursor = eyedropperActive ? 'crosshair' : retouchActive ? 'cell' : textTool ? 'crosshair' : 'default';
 
   // ── Landing screen ────────────────────────────────────────────────────────
   if (!imageFile) {
@@ -806,36 +831,70 @@ export default function Editor() {
               </TabsContent>
 
               {/* ── Retouch ── */}
-              <TabsContent value="retouch" className="mt-0 space-y-6">
-                <div className="space-y-3">
+              <TabsContent value="retouch" className="mt-0 space-y-5">
+                <div className="space-y-1">
                   <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Remove Text from Image</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Paint over text or watermarks. The brush samples the background colour just outside the brush edge and fills solid — no blur, clean result. Then use the Text tab to place new text on top.
+                    Pick the background colour first with the eyedropper, then paint over the text — it fills with the exact colour you picked.
                   </p>
                 </div>
 
-                {/* Activate / deactivate */}
-                <Button
-                  variant={retouchActive ? 'default' : 'outline'}
-                  className="w-full h-11 gap-2 font-medium"
-                  onClick={() => setRetouchActive(v => !v)}
-                  data-testid="button-retouch-activate"
-                >
-                  <Eraser className="w-4 h-4" />
-                  {retouchActive ? 'Exit Retouch Mode' : 'Activate Heal Brush'}
-                </Button>
-
-                {/* Undo */}
-                <Button variant="outline" className="w-full h-9 gap-2 text-sm"
-                  onClick={handleUndo} disabled={undoCount === 0} data-testid="button-undo">
-                  <Undo2 className="w-4 h-4" />
-                  Undo  {undoCount > 0 && <span className="text-muted-foreground text-xs">({undoCount} step{undoCount !== 1 ? 's' : ''})</span>}
-                </Button>
+                {/* ── Step 1: pick fill colour ── */}
+                <div className="space-y-2">
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Step 1 — Pick background colour</p>
+                  <div className="flex gap-2">
+                    <Button
+                      variant={eyedropperActive ? 'default' : 'outline'}
+                      className="flex-1 h-10 gap-2 text-sm"
+                      onClick={() => {
+                        setEyedropperActive(v => !v);
+                        setRetouchActive(false);
+                      }}
+                      data-testid="button-eyedropper"
+                    >
+                      <Pipette className="w-4 h-4" />
+                      {eyedropperActive ? 'Click on image…' : 'Eyedropper'}
+                    </Button>
+                    {/* Colour swatch */}
+                    <div
+                      className="w-10 h-10 rounded-md border-2 flex items-center justify-center shrink-0 cursor-pointer"
+                      style={{ backgroundColor: fillColor ?? 'transparent', borderColor: fillColor ? fillColor : 'hsl(var(--border))' }}
+                      title={fillColor ? `Fill colour: ${fillColor}` : 'No colour picked yet'}
+                      onClick={() => setFillColor(null)}
+                    >
+                      {!fillColor && <span className="text-[10px] text-muted-foreground leading-none text-center">Auto</span>}
+                    </div>
+                  </div>
+                  {fillColor && (
+                    <p className="text-[11px] text-muted-foreground">
+                      Locked to <span className="font-mono">{fillColor}</span> — click the swatch to reset to Auto
+                    </p>
+                  )}
+                  {!fillColor && (
+                    <p className="text-[11px] text-muted-foreground">
+                      Auto mode samples far outside the brush. Use Eyedropper for best results.
+                    </p>
+                  )}
+                </div>
 
                 <div className="h-px bg-border" />
 
-                <div className="space-y-5">
-                  {/* Brush size */}
+                {/* ── Step 2: paint ── */}
+                <div className="space-y-3">
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Step 2 — Paint over text</p>
+                  <Button
+                    variant={retouchActive ? 'default' : 'outline'}
+                    className="w-full h-10 gap-2 font-medium"
+                    onClick={() => {
+                      setRetouchActive(v => !v);
+                      setEyedropperActive(false);
+                    }}
+                    data-testid="button-retouch-activate"
+                  >
+                    <Eraser className="w-4 h-4" />
+                    {retouchActive ? 'Exit Paint Mode' : 'Activate Paint Brush'}
+                  </Button>
+
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Brush Size</span>
@@ -844,32 +903,20 @@ export default function Editor() {
                     <Slider value={[brushSize]} min={5} max={200} step={1}
                       onValueChange={([v]) => setBrushSize(v)} data-testid="slider-brush-size" />
                   </div>
-
-                  {/* Strength = sample rings 1-3 */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Sample Accuracy</span>
-                      <span className="text-muted-foreground">{brushStrength === 1 ? 'Fast' : brushStrength === 2 ? 'Balanced' : 'Precise'}</span>
-                    </div>
-                    <Slider value={[brushStrength]} min={1} max={3} step={1}
-                      onValueChange={([v]) => setBrushStrength(v)} data-testid="slider-brush-strength" />
-                  </div>
                 </div>
 
-                <div className="bg-background border border-border rounded-lg p-3 space-y-1.5">
-                  <p className="text-xs font-medium text-foreground">Tips for best results</p>
-                  <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                    <li>Size brush to cover the text fully</li>
-                    <li>Works best on solid / uniform backgrounds</li>
-                    <li>Use Precise accuracy for gradient backgrounds</li>
-                    <li>After removing, go to Text tab to add new text</li>
-                    <li>Use Undo if the fill colour looks wrong</li>
-                  </ul>
-                </div>
+                <div className="h-px bg-border" />
 
-                <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
-                  <p className="text-xs text-primary font-medium mb-1">Workflow tip</p>
-                  <p className="text-xs text-muted-foreground">Retouch to remove existing text → switch to the Text tab → pick a Style Template matching the original → type your new text on top.</p>
+                {/* Undo */}
+                <Button variant="outline" className="w-full h-9 gap-2 text-sm"
+                  onClick={handleUndo} disabled={undoCount === 0} data-testid="button-undo">
+                  <Undo2 className="w-4 h-4" />
+                  Undo {undoCount > 0 && <span className="text-muted-foreground text-xs ml-1">({undoCount} step{undoCount !== 1 ? 's' : ''})</span>}
+                </Button>
+
+                <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 space-y-1">
+                  <p className="text-xs text-primary font-medium">Workflow tip</p>
+                  <p className="text-xs text-muted-foreground">Eyedropper on background → Paint over text → switch to Text tab → add new text on top.</p>
                 </div>
               </TabsContent>
 
