@@ -74,14 +74,24 @@ const FONT_FAMILIES: { label: string; value: string; group: string; traits: stri
 ];
 
 const TEXT_TEMPLATES = [
-  { name: 'Bold Headline', fontFamily: 'Impact, Haettenschweiler, sans-serif', fontSize: 80, color: '#ffffff', bold: true,  italic: false, opacity: 100 },
-  { name: 'Watermark',     fontFamily: 'Inter, Arial, sans-serif',             fontSize: 40, color: '#ffffff', bold: false, italic: true,  opacity: 35  },
-  { name: 'Caption',       fontFamily: 'Inter, Arial, sans-serif',             fontSize: 28, color: '#ffffff', bold: false, italic: false, opacity: 95  },
-  { name: 'Subtitle',      fontFamily: 'Georgia, "Times New Roman", serif',    fontSize: 36, color: '#e2e8f0', bold: false, italic: true,  opacity: 100 },
-  { name: 'Stamp',         fontFamily: 'Impact, Haettenschweiler, sans-serif', fontSize: 60, color: '#ef4444', bold: true,  italic: false, opacity: 90  },
-  { name: 'Neon',          fontFamily: 'Impact, Haettenschweiler, sans-serif', fontSize: 64, color: '#4ade80', bold: true,  italic: false, opacity: 100 },
-  { name: 'Dark Label',    fontFamily: 'Inter, Arial, sans-serif',             fontSize: 32, color: '#000000', bold: true,  italic: false, opacity: 85  },
-  { name: 'Gold',          fontFamily: 'Georgia, "Times New Roman", serif',    fontSize: 48, color: '#facc15', bold: true,  italic: true,  opacity: 100 },
+  { name: 'Bold Headline',   fontFamily: 'Impact, sans-serif',               fontSize: 80, color: '#ffffff', bold: true,  italic: false, opacity: 100 },
+  { name: 'Movie Title',     fontFamily: '"Bebas Neue", sans-serif',          fontSize: 96, color: '#ffffff', bold: false, italic: false, opacity: 100 },
+  { name: 'Watermark',       fontFamily: 'Inter, sans-serif',                 fontSize: 40, color: '#ffffff', bold: false, italic: true,  opacity: 30  },
+  { name: 'Caption',         fontFamily: 'Inter, sans-serif',                 fontSize: 26, color: '#ffffff', bold: false, italic: false, opacity: 95  },
+  { name: 'Subtitle',        fontFamily: '"Playfair Display", serif',         fontSize: 38, color: '#e2e8f0', bold: false, italic: true,  opacity: 100 },
+  { name: 'Elegant Script',  fontFamily: '"Dancing Script", cursive',         fontSize: 64, color: '#f8fafc', bold: false, italic: false, opacity: 100 },
+  { name: 'Quote',           fontFamily: '"Playfair Display", serif',         fontSize: 32, color: '#e2e8f0', bold: false, italic: true,  opacity: 80  },
+  { name: 'Stamp',           fontFamily: 'Impact, sans-serif',               fontSize: 60, color: '#ef4444', bold: true,  italic: false, opacity: 90  },
+  { name: 'Neon Green',      fontFamily: 'Impact, sans-serif',               fontSize: 64, color: '#4ade80', bold: true,  italic: false, opacity: 100 },
+  { name: 'Neon Pink',       fontFamily: 'Oswald, sans-serif',               fontSize: 64, color: '#f472b6', bold: true,  italic: false, opacity: 100 },
+  { name: 'Gold Serif',      fontFamily: '"Playfair Display", serif',         fontSize: 52, color: '#facc15', bold: true,  italic: true,  opacity: 100 },
+  { name: 'Retro',           fontFamily: 'Oswald, sans-serif',               fontSize: 56, color: '#fb923c', bold: true,  italic: false, opacity: 100 },
+  { name: 'Dark Label',      fontFamily: 'Montserrat, sans-serif',            fontSize: 30, color: '#000000', bold: true,  italic: false, opacity: 90  },
+  { name: 'Social Handle',   fontFamily: 'Poppins, sans-serif',               fontSize: 28, color: '#ffffff', bold: true,  italic: false, opacity: 90  },
+  { name: 'Code Tag',        fontFamily: '"Space Mono", monospace',           fontSize: 24, color: '#4ade80', bold: false, italic: false, opacity: 95  },
+  { name: 'Minimalist',      fontFamily: 'Raleway, sans-serif',               fontSize: 36, color: '#ffffff', bold: false, italic: false, opacity: 85  },
+  { name: 'Warning',         fontFamily: 'Impact, sans-serif',               fontSize: 56, color: '#fbbf24', bold: true,  italic: false, opacity: 100 },
+  { name: 'Lobster Style',   fontFamily: 'Lobster, cursive',                  fontSize: 58, color: '#f87171', bold: false, italic: false, opacity: 100 },
 ];
 
 const PRESET_COLORS = [
@@ -515,7 +525,10 @@ export default function Editor() {
       setFontAnalyzerActive(false);
       return;
     }
-    if (!textTool) return;
+    if (!textTool) {
+      setSelectedId(null);
+      return;
+    }
     const { x, y } = canvasToPixel(e.clientX, e.clientY);
     const id = genId();
     setAnnotations(prev => [...prev, {
