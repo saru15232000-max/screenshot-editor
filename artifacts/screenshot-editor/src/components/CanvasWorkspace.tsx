@@ -1,8 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { UploadCloud } from 'lucide-react';
-import { ScreenShare } from 'lucide-react';
+import { UploadCloud, ScreenShare } from 'lucide-react';
 import { EditorContextType } from '../hooks/use-editor';
-import { drawAnnotations } from '../lib/canvas-utils';
+import { drawAnnotations, adjustmentsToFilter } from '../lib/canvas-utils';
 
 export function CanvasWorkspace({ editor, fileInputRef }: { editor: EditorContextType; fileInputRef: React.RefObject<HTMLInputElement | null> }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -24,7 +23,7 @@ export function CanvasWorkspace({ editor, fileInputRef }: { editor: EditorContex
     if (editor.background.roundedCorners) {
       ctx.save();
       ctx.beginPath();
-      ctx.roundRect(0, 0, canvas.width, canvas.height, 12);
+      (ctx as any).roundRect?.(0, 0, canvas.width, canvas.height, 12);
       ctx.clip();
       ctx.drawImage(editor.image, 0, 0);
       ctx.restore();
@@ -43,7 +42,13 @@ export function CanvasWorkspace({ editor, fileInputRef }: { editor: EditorContex
     canvas.height = editor.image.height;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (isDrawing && currentPoints.length > 0) {
-      drawAnnotations(ctx, [{ id: 'temp', type: editor.activeTool, points: currentPoints, color: editor.currentColor, size: editor.currentSize }], null);
+      drawAnnotations(ctx, [{
+        id: 'temp',
+        type: editor.activeTool,
+        points: currentPoints,
+        color: editor.currentColor,
+        size: editor.currentSize,
+      }], null);
     }
   }, [isDrawing, currentPoints, editor.image, editor.activeTool, editor.currentColor, editor.currentSize]);
 
@@ -64,15 +69,14 @@ export function CanvasWorkspace({ editor, fileInputRef }: { editor: EditorContex
         if (!ann.points.length) return false;
         let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
         ann.points.forEach(p => { minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x); minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y); });
-        const pad = Math.max(10, ann.size);
+        const pad = Math.max(20, ann.size);
         return x >= minX - pad && x <= maxX + pad && y >= minY - pad && y <= maxY + pad;
       });
       editor.setSelectedAnnotationId(hit ? hit.id : null);
       return;
     }
     if (editor.activeTool === 'text') {
-      const text = window.prompt('Enter text:');
-      if (text) editor.pushHistory([...editor.annotations, { id: Math.random().toString(), type: 'text', points: [{ x, y }], color: editor.currentColor, size: editor.currentSize, text, isComplete: true }]);
+      editor.addTextLayer(x, y);
       return;
     }
     setIsDrawing(true);
@@ -92,7 +96,12 @@ export function CanvasWorkspace({ editor, fileInputRef }: { editor: EditorContex
     if (!isDrawing) return;
     setIsDrawing(false);
     (e.target as HTMLElement).releasePointerCapture(e.pointerId);
-    if (currentPoints.length > 1) editor.pushHistory([...editor.annotations, { id: Math.random().toString(), type: editor.activeTool, points: currentPoints, color: editor.currentColor, size: editor.currentSize, isComplete: true }]);
+    if (currentPoints.length > 1) {
+      editor.pushHistory([
+        ...editor.annotations,
+        { id: Math.random().toString(36).slice(2, 10), type: editor.activeTool, points: currentPoints, color: editor.currentColor, size: editor.currentSize, isComplete: true }
+      ]);
+    }
     setCurrentPoints([]);
     setStartPoint(null);
   };
@@ -124,13 +133,17 @@ export function CanvasWorkspace({ editor, fileInputRef }: { editor: EditorContex
             <h3 className="text-xl font-medium mb-2">Drop your screenshot here</h3>
             <p className="text-muted-foreground mb-6">or click to browse</p>
             <div className="flex justify-center gap-2 text-xs font-medium text-muted-foreground">
-              {['JPG', 'PNG', 'WEBP', 'GIF'].map(f => <span key={f} className="bg-background px-2 py-1 rounded border border-border">{f}</span>)}
+              {['JPG', 'PNG', 'WEBP', 'GIF'].map(f => (
+                <span key={f} className="bg-background px-2 py-1 rounded border border-border">{f}</span>
+              ))}
             </div>
           </div>
         </div>
       </div>
     );
   }
+
+  const cssFilter = adjustmentsToFilter(editor.adjustments);
 
   return (
     <main
@@ -143,7 +156,8 @@ export function CanvasWorkspace({ editor, fileInputRef }: { editor: EditorContex
         id="export-container"
         className="relative shadow-2xl ring-1 ring-white/10 transition-all"
         style={{
-          background: editor.background.type === 'gradient' ? editor.background.gradient :
+          background:
+            editor.background.type === 'gradient' ? editor.background.gradient :
             editor.background.type === 'solid' ? editor.background.color : 'transparent',
           padding: `${editor.background.padding}px`,
           borderRadius: editor.background.padding > 0 ? '16px' : '0',
@@ -151,7 +165,7 @@ export function CanvasWorkspace({ editor, fileInputRef }: { editor: EditorContex
       >
         <div className={`relative overflow-hidden ${editor.background.browserChrome ? 'rounded-xl shadow-xl border border-white/10' : ''} ${editor.background.roundedCorners && !editor.background.browserChrome ? 'rounded-xl' : ''}`}>
           {editor.background.browserChrome && (
-            <div className="h-10 bg-card border-b border-border flex items-center px-4 gap-2">
+            <div className="h-10 bg-[#1e1e1e] border-b border-white/10 flex items-center px-4 gap-2">
               <div className="w-3 h-3 rounded-full bg-red-500/80" />
               <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
               <div className="w-3 h-3 rounded-full bg-green-500/80" />
@@ -161,12 +175,16 @@ export function CanvasWorkspace({ editor, fileInputRef }: { editor: EditorContex
             <canvas
               ref={canvasRef}
               className="max-w-full max-h-full object-contain block"
-              style={{ maxHeight: '70vh' }}
+              style={{ maxHeight: '70vh', filter: cssFilter }}
             />
             <canvas
               ref={overlayCanvasRef}
-              className="absolute inset-0 cursor-crosshair touch-none"
-              style={{ width: '100%', height: '100%' }}
+              className="absolute inset-0 touch-none"
+              style={{
+                width: '100%',
+                height: '100%',
+                cursor: editor.activeTool === 'select' ? 'default' : 'crosshair',
+              }}
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}

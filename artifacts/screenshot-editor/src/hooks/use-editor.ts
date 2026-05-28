@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
-import { Annotation, BackgroundOptions, EditorState, ToolType, Point } from '../types/editor';
+import { useState, useCallback, useEffect } from 'react';
+import { Annotation, BackgroundOptions, ToolType, Adjustments, DEFAULT_ADJUSTMENTS } from '../types/editor';
 
 const INITIAL_BACKGROUND: BackgroundOptions = {
   type: 'gradient',
@@ -20,18 +20,30 @@ export function useEditor() {
   const [selectedAnnotationId, setSelectedAnnotationId] = useState<string | null>(null);
   const [history, setHistory] = useState<Annotation[][]>([[]]);
   const [historyIndex, setHistoryIndex] = useState<number>(0);
+  const [adjustments, setAdjustments] = useState<Adjustments>(DEFAULT_ADJUSTMENTS);
+
+  // Text tool state
+  const [fontSize, setFontSize] = useState<number>(32);
+  const [fontFamily, setFontFamily] = useState<string>('Inter, sans-serif');
+  const [textColor, setTextColor] = useState<string>('#ffffff');
+  const [bold, setBold] = useState<boolean>(false);
+  const [italic, setItalic] = useState<boolean>(false);
+  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('left');
+  const [textOpacity, setTextOpacity] = useState<number>(100);
 
   const pushHistory = useCallback((newAnnotations: Annotation[]) => {
-    const newHistory = history.slice(0, historyIndex + 1);
-    newHistory.push(newAnnotations);
-    setHistory(newHistory);
-    setHistoryIndex(newHistory.length - 1);
+    setHistory(prev => {
+      const newHistory = prev.slice(0, historyIndex + 1);
+      newHistory.push(newAnnotations);
+      return newHistory;
+    });
+    setHistoryIndex(prev => prev + 1);
     setAnnotations(newAnnotations);
-  }, [history, historyIndex]);
+  }, [historyIndex]);
 
   const undo = useCallback(() => {
     if (historyIndex > 0) {
-      setHistoryIndex(historyIndex - 1);
+      setHistoryIndex(i => i - 1);
       setAnnotations(history[historyIndex - 1]);
       setSelectedAnnotationId(null);
     }
@@ -39,7 +51,7 @@ export function useEditor() {
 
   const redo = useCallback(() => {
     if (historyIndex < history.length - 1) {
-      setHistoryIndex(historyIndex + 1);
+      setHistoryIndex(i => i + 1);
       setAnnotations(history[historyIndex + 1]);
       setSelectedAnnotationId(null);
     }
@@ -55,26 +67,6 @@ export function useEditor() {
     reader.readAsDataURL(file);
   }, []);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
-        if (e.shiftKey) {
-          redo();
-        } else {
-          undo();
-        }
-      }
-      if (e.key === 'Delete' || e.key === 'Backspace') {
-        if (selectedAnnotationId) {
-          pushHistory(annotations.filter(a => a.id !== selectedAnnotationId));
-          setSelectedAnnotationId(null);
-        }
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [undo, redo, selectedAnnotationId, annotations, pushHistory]);
-
   const reset = useCallback(() => {
     setImage(null);
     setAnnotations([]);
@@ -83,27 +75,65 @@ export function useEditor() {
     setSelectedAnnotationId(null);
     setActiveTool('select');
     setBackground(INITIAL_BACKGROUND);
+    setAdjustments(DEFAULT_ADJUSTMENTS);
   }, []);
 
+  const addTextLayer = useCallback((x: number, y: number) => {
+    const id = Math.random().toString(36).slice(2, 10);
+    const newAnn: Annotation = {
+      id,
+      type: 'text',
+      points: [{ x, y }],
+      color: textColor,
+      size: fontSize,
+      text: 'Your text here',
+      fontFamily,
+      fontSize,
+      bold,
+      italic,
+      align: textAlign,
+      opacity: textOpacity,
+      isComplete: true,
+    };
+    const next = [...annotations, newAnn];
+    pushHistory(next);
+    setSelectedAnnotationId(id);
+    return id;
+  }, [annotations, pushHistory, textColor, fontSize, fontFamily, bold, italic, textAlign, textOpacity]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        if (e.shiftKey) redo(); else undo();
+      }
+      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedAnnotationId) {
+        pushHistory(annotations.filter(a => a.id !== selectedAnnotationId));
+        setSelectedAnnotationId(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [undo, redo, selectedAnnotationId, annotations, pushHistory]);
+
   return {
-    image,
-    setImage,
-    annotations,
-    setAnnotations,
-    activeTool,
-    setActiveTool,
-    currentColor,
-    setCurrentColor,
-    currentSize,
-    setCurrentSize,
-    background,
-    setBackground,
-    selectedAnnotationId,
-    setSelectedAnnotationId,
+    image, setImage,
+    annotations, setAnnotations,
+    activeTool, setActiveTool,
+    currentColor, setCurrentColor,
+    currentSize, setCurrentSize,
+    background, setBackground,
+    selectedAnnotationId, setSelectedAnnotationId,
+    adjustments, setAdjustments,
+    fontSize, setFontSize,
+    fontFamily, setFontFamily,
+    textColor, setTextColor,
+    bold, setBold,
+    italic, setItalic,
+    textAlign, setTextAlign,
+    textOpacity, setTextOpacity,
     pushHistory,
-    undo,
-    redo,
-    reset,
+    undo, redo, reset,
+    addTextLayer,
     handleImageUpload,
     canUndo: historyIndex > 0,
     canRedo: historyIndex < history.length - 1,
