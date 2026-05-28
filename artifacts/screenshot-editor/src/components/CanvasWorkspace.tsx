@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { UploadCloud, ScreenShare } from 'lucide-react';
 import { EditorContextType } from '../hooks/use-editor';
 import { drawAnnotations, adjustmentsToFilter } from '../lib/canvas-utils';
 
@@ -43,11 +42,8 @@ export function CanvasWorkspace({ editor, fileInputRef }: { editor: EditorContex
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (isDrawing && currentPoints.length > 0) {
       drawAnnotations(ctx, [{
-        id: 'temp',
-        type: editor.activeTool,
-        points: currentPoints,
-        color: editor.currentColor,
-        size: editor.currentSize,
+        id: 'temp', type: editor.activeTool, points: currentPoints,
+        color: editor.currentColor, size: editor.currentSize,
       }], null);
     }
   }, [isDrawing, currentPoints, editor.image, editor.activeTool, editor.currentColor, editor.currentSize]);
@@ -106,51 +102,12 @@ export function CanvasWorkspace({ editor, fileInputRef }: { editor: EditorContex
     setStartPoint(null);
   };
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file?.type.startsWith('image/')) editor.handleImageUpload(file);
-  };
-
-  if (!editor.image) {
-    return (
-      <div
-        className="flex-1 flex flex-col items-center justify-center bg-background text-foreground p-6"
-        onDragOver={e => e.preventDefault()}
-        onDrop={handleDrop}
-      >
-        <div className="max-w-md w-full text-center space-y-8">
-          <div className="flex items-center justify-center gap-3 text-primary mb-12">
-            <ScreenShare className="w-10 h-10" />
-            <h1 className="text-4xl font-bold tracking-tight">Snapmark</h1>
-          </div>
-          <div
-            className="border-2 border-dashed border-border rounded-xl p-12 hover:border-primary hover:bg-card transition-colors cursor-pointer group"
-            onClick={() => fileInputRef.current?.click()}
-            data-testid="upload-dropzone"
-          >
-            <UploadCloud className="w-16 h-16 mx-auto mb-4 text-muted-foreground group-hover:text-primary transition-colors" />
-            <h3 className="text-xl font-medium mb-2">Drop your screenshot here</h3>
-            <p className="text-muted-foreground mb-6">or click to browse</p>
-            <div className="flex justify-center gap-2 text-xs font-medium text-muted-foreground">
-              {['JPG', 'PNG', 'WEBP', 'GIF'].map(f => (
-                <span key={f} className="bg-background px-2 py-1 rounded border border-border">{f}</span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   const cssFilter = adjustmentsToFilter(editor.adjustments);
 
   return (
     <main
       ref={containerRef}
       className="flex-1 bg-black/40 overflow-auto relative flex items-center justify-center p-8"
-      onDragOver={e => e.preventDefault()}
-      onDrop={handleDrop}
     >
       <div
         id="export-container"
