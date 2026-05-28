@@ -1,6 +1,5 @@
 import React, { useCallback, useRef } from 'react';
 import { useEditor } from '../hooks/use-editor';
-import { Toolbar } from '../components/Toolbar';
 import { Sidebar } from '../components/Sidebar';
 import { CanvasWorkspace } from '../components/CanvasWorkspace';
 import html2canvas from 'html2canvas';
@@ -56,7 +55,7 @@ export default function EditorPage() {
         if (file?.type.startsWith('image/')) editor.handleImageUpload(file);
       }}
     >
-      {/* Top Bar — matches Lumina exactly */}
+      {/* Top Bar — identical to Lumina */}
       <header className="h-16 border-b border-border bg-card flex items-center justify-between px-4 shrink-0 z-10">
         <div className="flex items-center gap-2 text-primary font-bold tracking-tight text-xl">
           <ScreenShare className="w-6 h-6" /> Snapmark
@@ -64,31 +63,15 @@ export default function EditorPage() {
 
         {editor.image && (
           <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => editor.reset()}
-              data-testid="button-new-image"
-            >
+            <Button variant="outline" size="sm" onClick={() => editor.reset()}>
               New Screenshot
             </Button>
             <div className="flex items-center gap-2 bg-background rounded-md border border-border p-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 gap-2 text-sm"
-                onClick={handleCopy}
-                data-testid="button-copy"
-              >
+              <Button variant="ghost" size="sm" className="h-8 gap-2 text-sm" onClick={handleCopy}>
                 <Copy className="w-4 h-4" /> Copy
               </Button>
               <div className="w-px h-4 bg-border mx-1" />
-              <Button
-                size="sm"
-                className="h-8 font-semibold gap-2"
-                onClick={handleDownload}
-                data-testid="button-download"
-              >
+              <Button size="sm" className="h-8 font-semibold gap-2" onClick={handleDownload}>
                 <Download className="w-4 h-4" /> Download
               </Button>
             </div>
@@ -107,14 +90,10 @@ export default function EditorPage() {
         }}
       />
 
+      {/* Body — canvas + right sidebar only (no left toolbar, matching Lumina) */}
       <div className="flex flex-1 overflow-hidden relative">
-        {editor.image && (
-          <Toolbar editor={editor} />
-        )}
         <CanvasWorkspace editor={editor} fileInputRef={fileInputRef} />
-        {editor.image && (
-          <Sidebar editor={editor} />
-        )}
+        {editor.image && <Sidebar editor={editor} />}
       </div>
     </div>
   );
