@@ -1,21 +1,17 @@
-export type ToolType = 'select' | 'arrow' | 'rect' | 'text' | 'pen' | 'blur' | 'crop';
-
 export type Point = { x: number; y: number };
 
-export type Annotation = {
+export type TextAnnotation = {
   id: string;
-  type: ToolType;
-  points: Point[];
+  text: string;
+  x: number;
+  y: number;
+  fontSize: number;
+  fontFamily: string;
   color: string;
-  size: number;
-  text?: string;
-  fontFamily?: string;
-  fontSize?: number;
-  bold?: boolean;
-  italic?: boolean;
-  align?: 'left' | 'center' | 'right';
-  opacity?: number;
-  isComplete?: boolean;
+  bold: boolean;
+  italic: boolean;
+  align: 'left' | 'center' | 'right';
+  opacity: number;
 };
 
 export type Adjustments = {
@@ -40,6 +36,9 @@ export const DEFAULT_ADJUSTMENTS: Adjustments = {
   invert: 0,
 };
 
+export type Transform = { flipH: boolean; flipV: boolean; rotate: number };
+export const DEFAULT_TRANSFORM: Transform = { flipH: false, flipV: false, rotate: 0 };
+
 export type BackgroundOptions = {
   type: 'transparent' | 'solid' | 'gradient';
   color: string;
@@ -47,17 +46,4 @@ export type BackgroundOptions = {
   padding: number;
   browserChrome: boolean;
   roundedCorners: boolean;
-};
-
-export type EditorState = {
-  image: HTMLImageElement | null;
-  annotations: Annotation[];
-  activeTool: ToolType;
-  currentColor: string;
-  currentSize: number;
-  background: BackgroundOptions;
-  selectedAnnotationId: string | null;
-  history: Annotation[][];
-  historyIndex: number;
-  adjustments: Adjustments;
 };
