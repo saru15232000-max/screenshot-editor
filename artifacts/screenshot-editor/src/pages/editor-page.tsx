@@ -1,14 +1,16 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useEditor } from '../hooks/use-editor';
 import { Toolbar } from '../components/Toolbar';
 import { Sidebar } from '../components/Sidebar';
 import { CanvasWorkspace } from '../components/CanvasWorkspace';
 import html2canvas from 'html2canvas';
 import { toast } from 'sonner';
-import { ScreenShare } from 'lucide-react';
+import { ScreenShare, Download, Copy } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function EditorPage() {
   const editor = useEditor();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDownload = useCallback(async () => {
     const el = document.getElementById('export-container');
@@ -45,20 +47,74 @@ export default function EditorPage() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-background text-foreground">
-      {/* Header */}
-      <header className="flex items-center gap-3 px-6 h-14 border-b border-sidebar-border bg-sidebar shrink-0">
-        <div className="flex items-center gap-2.5">
-          <ScreenShare className="w-5 h-5 text-primary" strokeWidth={2} />
-          <span className="text-base font-semibold text-foreground tracking-tight">Snapmark</span>
+    <div
+      className="min-h-screen w-full flex flex-col bg-background text-foreground overflow-hidden"
+      onDragOver={e => e.preventDefault()}
+      onDrop={e => {
+        e.preventDefault();
+        const file = e.dataTransfer.files[0];
+        if (file?.type.startsWith('image/')) editor.handleImageUpload(file);
+      }}
+    >
+      {/* Top Bar — matches Lumina exactly */}
+      <header className="h-16 border-b border-border bg-card flex items-center justify-between px-4 shrink-0 z-10">
+        <div className="flex items-center gap-2 text-primary font-bold tracking-tight text-xl">
+          <ScreenShare className="w-6 h-6" /> Snapmark
         </div>
+
+        {editor.image && (
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => editor.reset()}
+              data-testid="button-new-image"
+            >
+              New Screenshot
+            </Button>
+            <div className="flex items-center gap-2 bg-background rounded-md border border-border p-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 gap-2 text-sm"
+                onClick={handleCopy}
+                data-testid="button-copy"
+              >
+                <Copy className="w-4 h-4" /> Copy
+              </Button>
+              <div className="w-px h-4 bg-border mx-1" />
+              <Button
+                size="sm"
+                className="h-8 font-semibold gap-2"
+                onClick={handleDownload}
+                data-testid="button-download"
+              >
+                <Download className="w-4 h-4" /> Download
+              </Button>
+            </div>
+          </div>
+        )}
       </header>
 
-      {/* Editor body */}
-      <div className="flex flex-1 overflow-hidden">
-        <Toolbar editor={editor} onDownload={handleDownload} onCopy={handleCopy} />
-        <CanvasWorkspace editor={editor} />
-        <Sidebar editor={editor} />
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        accept="image/*"
+        onChange={e => {
+          const file = e.target.files?.[0];
+          if (file) editor.handleImageUpload(file);
+        }}
+      />
+
+      <div className="flex flex-1 overflow-hidden relative">
+        {editor.image && (
+          <Toolbar editor={editor} />
+        )}
+        <CanvasWorkspace editor={editor} fileInputRef={fileInputRef} />
+        {editor.image && (
+          <Sidebar editor={editor} />
+        )}
       </div>
     </div>
   );

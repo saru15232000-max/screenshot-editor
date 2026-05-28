@@ -75,6 +75,16 @@ export function useEditor() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [undo, redo, selectedAnnotationId, annotations, pushHistory]);
 
+  const reset = useCallback(() => {
+    setImage(null);
+    setAnnotations([]);
+    setHistory([[]]);
+    setHistoryIndex(0);
+    setSelectedAnnotationId(null);
+    setActiveTool('select');
+    setBackground(INITIAL_BACKGROUND);
+  }, []);
+
   return {
     image,
     setImage,
@@ -93,6 +103,7 @@ export function useEditor() {
     pushHistory,
     undo,
     redo,
+    reset,
     handleImageUpload,
     canUndo: historyIndex > 0,
     canRedo: historyIndex < history.length - 1,
