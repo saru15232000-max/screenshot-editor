@@ -1,0 +1,281 @@
+You are an expert SEO engineer and Next.js SaaS developer.
+
+I want you to massively improve the SEO of my app “FlowNote”.
+
+====================================================
+GOAL
+====================================================
+
+Create SEO optimized page titles, metadata, routes, headings, and structured pages targeting high-volume Google keywords around:
+
+- screenshot editor
+- screenshot annotation
+- screenshot editing
+- screenshot markup
+- screenshot blur
+- screenshot crop
+- screenshot collaboration
+- screenshot tools
+
+The goal is to rank on Google for long-tail screenshot editor keywords.
+
+====================================================
+IMPORTANT SEO RULES
+====================================================
+
+1. Every page must have:
+- unique title
+- unique meta description
+- h1
+- keyword optimized content
+- clean URL slug
+
+2. Titles must:
+- include target keyword
+- sound natural
+- improve CTR
+- stay under 60 characters when possible
+
+3. Meta descriptions:
+- 140–160 characters
+- action focused
+- keyword rich
+- no keyword stuffing
+
+4. Create SEO-friendly URLs.
+
+Example:
+- /free-screenshot-editor
+- /blur-screenshot-online
+- /annotate-screenshot
+- /crop-screenshot-online
+
+5. Add:
+- Open Graph metadata
+- Twitter metadata
+- canonical URLs
+- schema markup
+- sitemap support
+
+====================================================
+BRAND NAME
+====================================================
+
+Brand:
+FlowNote
+
+Domain:
+useflownote.online
+
+====================================================
+CREATE SEO PAGES FOR THESE KEYWORDS
+====================================================
+
+Free Screenshot Editor Online
+Screenshot Editor Online
+Online Screenshot Editor Free
+Best Screenshot Editor
+AI Screenshot Editor
+Screenshot Editor Free Download
+Screenshot Editor for Windows
+Screenshot Editor for Mac
+Screenshot Editor App
+Screenshot Editor Tool
+Edit Screenshot Online
+Screenshot Editing Tool
+Free Screenshot Editing Software
+Screenshot Annotation Tool
+Screenshot Markup Tool
+Screenshot Blur Tool
+Screenshot Crop Tool
+Screenshot Text Editor
+Screenshot Drawing Tool
+Screenshot Redaction Tool
+Best Free Screenshot Editor
+Advanced Screenshot Editor
+Professional Screenshot Editor
+Fast Screenshot Editor
+Easy Screenshot Editor
+Smart Screenshot Editor
+Modern Screenshot Editor
+Screenshot Editor with AI
+Screenshot Editor for PC
+Browser Screenshot Editor
+Screenshot Editor Without Download
+Screenshot Editor No Signup
+Instant Screenshot Editor
+Screenshot Editor Online No Login
+Screenshot Editor for Chrome
+Screenshot Editor for Firefox
+Screenshot Editor for Edge
+Screenshot Editor with Blur
+Screenshot Editor with Text
+Screenshot Editor with Arrows
+Screenshot Editor with Shapes
+Screenshot Editor with Highlight Tool
+Screenshot Editor with Crop Feature
+Screenshot Editor with Annotation
+Screenshot Editor with Sharing
+Screenshot Editor with Collaboration
+Screenshot Editor with Comments
+Screenshot Editor with AI Blur
+Screenshot Editor for Teams
+Screenshot Editor for Developers
+Screenshot Editor for Designers
+Screenshot Editor for Students
+Screenshot Editor for Work
+Screenshot Editor for Productivity
+Screenshot Editor for Documentation
+Screenshot Editor for Tutorials
+Screenshot Editor for Feedback
+Screenshot Editor for Remote Teams
+Screenshot Editor for Bug Reports
+Screenshot Editor for Presentations
+Free AI Screenshot Editor
+AI Powered Screenshot Editor
+Screenshot AI Tool
+AI Screenshot Annotation Tool
+AI Screenshot Blur Tool
+Smart Screenshot Editing Tool
+AI Screenshot Markup Tool
+AI Screenshot Crop Tool
+AI Screenshot Cleanup Tool
+AI Screenshot Sharing Tool
+Screenshot Annotation Software
+Screenshot Editing Software
+Screenshot Editing App
+Screenshot Editing Website
+Screenshot Editing Platform
+Screenshot Editing Workspace
+Screenshot Editing Service
+Screenshot Editing Program
+Screenshot Editing Utility
+Screenshot Editing Dashboard
+Online Screenshot Annotation Tool
+Online Screenshot Markup Tool
+Online Screenshot Blur Tool
+Online Screenshot Crop Tool
+Online Screenshot Drawing Tool
+Online Screenshot Collaboration Tool
+Online Screenshot Comment Tool
+Online Screenshot Sharing Tool
+Online Screenshot Workspace
+Online Screenshot Editing Tool
+Best Screenshot Annotation Tool
+Best Screenshot Editing Software
+Best Screenshot Markup Tool
+Best Screenshot Blur Tool
+Best Screenshot Crop Tool
+Best Screenshot Drawing Tool
+Best Screenshot Sharing Tool
+Best Screenshot Collaboration Tool
+Best Screenshot Tool Online
+Best Screenshot Editing Website
+Free Screenshot Annotation Tool
+Free Screenshot Blur Tool
+Free Screenshot Crop Tool
+Free Screenshot Drawing Tool
+Free Screenshot Sharing Tool
+Free Screenshot Collaboration Tool
+Free Screenshot Markup Tool
+Free Screenshot Editing Website
+Free Screenshot Editing Platform
+Free Screenshot Editing Workspace
+Screenshot Editor Like Snagit
+Screenshot Editor Alternative to Snagit
+Screenshot Editor Like Lightshot
+Screenshot Editor Alternative to Greenshot
+Screenshot Editor Like Canva
+Screenshot Editor Alternative to Markup Hero
+Screenshot Editor Alternative to Awesome Screenshot
+Screenshot Editor Alternative to Monosnap
+Screenshot Editor Alternative to Loom
+Screenshot Editor Alternative to CleanShot
+Add Text to Screenshot Online
+Add Arrow to Screenshot Online
+Blur Screenshot Online
+Annotate Screenshot Online
+Highlight Screenshot Online
+Draw on Screenshot Online
+Edit Screenshot Without Photoshop
+Edit Screenshot Free Online
+Edit Screenshot Instantly
+Edit Screenshot in Browser
+Screenshot Tool Online Free
+Screenshot Management Tool
+Screenshot Productivity Tool
+Screenshot Collaboration Software
+Screenshot Workflow Tool
+Screenshot Communication Tool
+Screenshot Workspace Platform
+Screenshot Note Taking Tool
+Screenshot Visual Feedback Tool
+Screenshot Sharing and Editing Tool
+Screenshot Editor SaaS
+Screenshot Editor Startup Tool
+Screenshot Editor for Businesses
+Screenshot Editor for Agencies
+Screenshot Editor for Creators
+Screenshot Editor for Content Teams
+Screenshot Editor for QA Testing
+Screenshot Editor for Customer Support
+Screenshot Editor for Product Teams
+Screenshot Editor for Online Workflows
+
+====================================================
+FOR EACH PAGE GENERATE
+====================================================
+
+1. SEO page title
+2. Meta description
+3. URL slug
+4. H1
+5. Intro paragraph
+6. SEO optimized section headings
+7. FAQ schema
+8. Internal linking suggestions
+9. CTA section
+10. JSON-LD structured data
+
+====================================================
+TECHNICAL SEO
+====================================================
+
+Implement:
+- dynamic metadata
+- sitemap.xml
+- robots.txt
+- canonical URLs
+- OpenGraph images
+- Twitter cards
+- semantic HTML
+- optimized heading hierarchy
+- lazy loading
+- image optimization
+- schema markup
+
+====================================================
+DESIGN REQUIREMENTS
+====================================================
+
+Keep pages visually premium:
+- modern SaaS layout
+- clean typography
+- gradient accents
+- glassmorphism cards
+- dark mode
+- responsive
+- fast loading
+
+Style inspiration:
+- Notion
+- Linear
+- Framer
+- Arc
+- Canva
+
+====================================================
+FINAL GOAL
+====================================================
+
+Build a scalable SEO architecture that can help FlowNote rank on Google for screenshot editor related keywords while keeping the brand premium and modern.

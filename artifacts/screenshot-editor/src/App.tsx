@@ -4,6 +4,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import EditorPage from "@/pages/editor-page";
+import FreeScreenshotEditor from "@/pages/seo/FreeScreenshotEditor";
+import AnnotateScreenshot from "@/pages/seo/AnnotateScreenshot";
+import BlurScreenshot from "@/pages/seo/BlurScreenshot";
+import NoSignupEditor from "@/pages/seo/NoSignupEditor";
+import AiScreenshotEditor from "@/pages/seo/AiScreenshotEditor";
+import AddTextToScreenshot from "@/pages/seo/AddTextToScreenshot";
 
 const queryClient = new QueryClient();
 
@@ -11,6 +17,12 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={EditorPage} />
+      <Route path="/free-screenshot-editor-online" component={FreeScreenshotEditor} />
+      <Route path="/annotate-screenshot-online" component={AnnotateScreenshot} />
+      <Route path="/blur-screenshot-online" component={BlurScreenshot} />
+      <Route path="/screenshot-editor-no-signup" component={NoSignupEditor} />
+      <Route path="/ai-screenshot-editor" component={AiScreenshotEditor} />
+      <Route path="/add-text-to-screenshot-online" component={AddTextToScreenshot} />
       <Route component={NotFound} />
     </Switch>
   );
