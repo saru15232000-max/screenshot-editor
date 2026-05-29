@@ -1,0 +1,344 @@
+You are an elite SEO strategist, SaaS content architect, UX writer, and Next.js engineer.
+
+Your job is to transform my SaaS app “FlowNote” into a high-authority SEO platform that ranks on Google for screenshot editor keywords WITHOUT looking AI-generated or spammy.
+
+The content must feel:
+- human written
+- useful
+- authoritative
+- trustworthy
+- modern
+- premium
+- experience based
+
+Avoid:
+- robotic SEO writing
+- repetitive keyword stuffing
+- generic AI phrasing
+- low quality filler text
+
+The website should feel like a real funded SaaS startup built by experienced product people.
+
+====================================================
+BRAND
+====================================================
+
+Brand Name:
+FlowNote
+
+Domain:
+useflownote.online
+
+Tagline:
+Capture. Organize. Flow.
+
+====================================================
+PRIMARY SEO GOAL
+====================================================
+
+Rank on Google for:
+- screenshot editor
+- free screenshot editor online
+- annotate screenshot online
+- blur screenshot online
+- screenshot markup tool
+- screenshot collaboration tool
+- AI screenshot editor
+- screenshot editor alternative pages
+- screenshot workflow tools
+
+====================================================
+CRITICAL SEO STRATEGY
+====================================================
+
+DO NOT create thin pages.
+
+Every page must feel:
+- deeply useful
+- practical
+- experience driven
+- genuinely written by humans
+
+Each page should contain:
+- real use cases
+- practical explanations
+- workflow examples
+- tool comparisons
+- feature breakdowns
+- FAQs
+- actionable benefits
+
+====================================================
+CONTENT STYLE
+====================================================
+
+Write like:
+- Linear
+- Notion
+- Framer
+- Canva
+- Loom
+- Raycast
+
+Tone:
+- clean
+- confident
+- intelligent
+- concise
+- modern
+
+Do NOT:
+- overhype
+- use fake marketing buzzwords
+- sound robotic
+- repeat keywords unnaturally
+
+====================================================
+PAGE STRUCTURE
+====================================================
+
+For every SEO page generate:
+
+1. SEO optimized title
+2. Meta description
+3. URL slug
+4. Open Graph title
+5. Twitter title
+6. Canonical URL
+7. H1
+8. Hero section
+9. Intro paragraph
+10. Feature sections
+11. Workflow examples
+12. Use cases
+13. Comparison section
+14. FAQ section
+15. CTA section
+16. Internal linking strategy
+17. JSON-LD schema
+
+====================================================
+IMPORTANT HUMAN WRITING RULES
+====================================================
+
+The writing MUST:
+- vary sentence lengths
+- include natural transitions
+- include conversational explanations
+- avoid repetitive structure
+- avoid generic AI wording
+- feel opinionated and practical
+- contain believable product language
+
+Examples of GOOD style:
+- “Sometimes you just need to quickly blur sensitive information before sharing a screenshot.”
+- “Instead of opening Photoshop for a small edit, FlowNote keeps the workflow lightweight.”
+- “Most screenshot tools feel outdated or overloaded with features.”
+
+Examples of BAD AI style:
+- “In today’s digital landscape...”
+- “Unlock the power of...”
+- “Revolutionary screenshot editing solution...”
+- “Enhance your productivity with cutting-edge technology...”
+
+====================================================
+DESIGN REQUIREMENTS
+====================================================
+
+The pages must visually feel:
+- premium
+- minimalist
+- startup quality
+- polished
+
+Use:
+- dark modern UI
+- smooth gradients
+- glassmorphism
+- clean typography
+- spacing similar to Linear/Notion
+- responsive layouts
+- subtle animations
+
+====================================================
+TYPOGRAPHY
+====================================================
+
+Use:
+- Inter
+OR
+- Geist
+OR
+- Satoshi
+
+Typography style:
+- large bold headings
+- clean reading width
+- strong spacing rhythm
+- modern SaaS hierarchy
+
+====================================================
+SEO PAGE CLUSTERS
+====================================================
+
+Create pages for these clusters:
+
+----------------------------------------------------
+CORE PAGES
+----------------------------------------------------
+
+/free-screenshot-editor-online
+/screenshot-editor-online
+/ai-screenshot-editor
+/edit-screenshot-online
+/best-screenshot-editor
+
+----------------------------------------------------
+FEATURE PAGES
+----------------------------------------------------
+
+/blur-screenshot-online
+/annotate-screenshot-online
+/crop-screenshot-online
+/add-text-to-screenshot
+/add-arrow-to-screenshot
+/highlight-screenshot
+/draw-on-screenshot
+
+----------------------------------------------------
+COMPARISON PAGES
+----------------------------------------------------
+
+/snagit-alternative
+/lightshot-alternative
+/greenshot-alternative
+/markup-hero-alternative
+/cleanshot-alternative
+
+These pages should include:
+- comparison tables
+- honest pros and cons
+- workflow differences
+- pricing comparisons
+- lightweight UX comparisons
+
+----------------------------------------------------
+AUDIENCE PAGES
+----------------------------------------------------
+
+/screenshot-editor-for-developers
+/screenshot-editor-for-designers
+/screenshot-editor-for-teams
+/screenshot-editor-for-students
+/screenshot-editor-for-qa-testing
+
+----------------------------------------------------
+PLATFORM PAGES
+----------------------------------------------------
+
+/screenshot-editor-for-windows
+/screenshot-editor-for-mac
+/browser-screenshot-editor
+/chrome-screenshot-editor
+
+====================================================
+CONTENT DEPTH
+====================================================
+
+Each page should contain:
+- 1200–2500 words
+- original wording
+- natural keyword placement
+- semantic SEO terms
+- contextual relevance
+
+Add:
+- bullet lists
+- feature cards
+- workflow examples
+- FAQs
+- tables
+- screenshots placeholders
+- callouts
+
+====================================================
+TECHNICAL SEO
+====================================================
+
+Implement:
+- dynamic metadata
+- OpenGraph tags
+- Twitter cards
+- canonical URLs
+- robots.txt
+- sitemap.xml
+- structured schema markup
+- semantic HTML
+- breadcrumb schema
+- FAQ schema
+- article schema
+- lazy loading
+- image optimization
+
+====================================================
+NEXT.JS SEO ARCHITECTURE
+====================================================
+
+Use:
+- app router
+- dynamic metadata generation
+- reusable SEO components
+- dynamic routes
+- server components where possible
+
+Create:
+- reusable SEO page template
+- reusable FAQ component
+- reusable CTA section
+- reusable comparison table component
+
+====================================================
+INTERNAL LINKING
+====================================================
+
+Every page should:
+- link to related pages
+- create topic clusters
+- strengthen topical authority
+
+Example:
+blur-screenshot-online
+links to:
+- annotate-screenshot-online
+- screenshot-markup-tool
+- add-text-to-screenshot
+
+====================================================
+GOOGLE QUALITY REQUIREMENTS
+====================================================
+
+The site should NOT look:
+- auto generated
+- mass produced
+- keyword stuffed
+- spammy
+
+The content should feel:
+- genuinely useful
+- written by experts
+- experience based
+- product aware
+- workflow focused
+
+====================================================
+FINAL GOAL
+====================================================
+
+Build a scalable SEO-driven SaaS architecture that:
+- ranks for screenshot editor keywords
+- builds topical authority
+- feels premium
+- looks human written
+- converts visitors into users
+- scales long term
+- supports future AI tools and workspace products
