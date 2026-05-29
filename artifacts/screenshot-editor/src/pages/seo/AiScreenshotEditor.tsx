@@ -1,23 +1,11 @@
 import { useCallback } from 'react';
 import { useLocation } from 'wouter';
-import { Brain, ScanSearch, Sparkles, Wand2, Pipette, Eraser, Layers, Download } from 'lucide-react';
+import { Brain, ScanSearch, Eraser, Pipette, Wand2, Zap } from 'lucide-react';
 import { SEOLandingPage } from '@/components/SEOLandingPage';
 import { useSEO } from '@/hooks/use-seo';
 import { useEditor } from '@/hooks/use-editor';
 
 const BASE = 'https://useflownote.online';
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'FlowNote — AI Screenshot Editor',
-  applicationCategory: 'UtilitiesApplication',
-  operatingSystem: 'Web Browser',
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-  url: `${BASE}/ai-screenshot-editor`,
-  description: 'AI-powered screenshot editor. AI font analyzer, smart retouch, auto-patch, and intelligent editing tools — free, no signup.',
-  featureList: ['AI Font Analyzer', 'Smart Auto-Patch Retouch', 'Intelligent color sampling', 'AI-powered filter presets'],
-};
 
 export default function AiScreenshotEditor() {
   const [, navigate] = useLocation();
@@ -25,10 +13,20 @@ export default function AiScreenshotEditor() {
 
   useSEO({
     title: 'AI Screenshot Editor Free — FlowNote',
-    description: 'AI-powered screenshot editor with font analyzer, smart retouch & auto-patch tools. Edit smarter, not harder. Free, no signup. Try FlowNote.',
+    description: 'AI-powered screenshot editor with font analyzer, smart auto-patch retouch and intelligent color sampling. Runs entirely in your browser. Free, no signup.',
     canonical: `${BASE}/ai-screenshot-editor`,
-    keywords: 'AI screenshot editor, AI powered screenshot editing, smart screenshot editor, AI font analyzer, AI screenshot annotation, AI screenshot tool',
-    jsonLd,
+    keywords: 'AI screenshot editor, AI powered screenshot editing, smart screenshot editor, AI font analyzer, AI screenshot tool',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'FlowNote — AI Screenshot Editor',
+      applicationCategory: 'UtilitiesApplication',
+      operatingSystem: 'Web Browser',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      url: `${BASE}/ai-screenshot-editor`,
+      description: 'AI-powered screenshot editing with font detection, smart retouch and color sampling. Browser-based, free.',
+      featureList: ['AI Font Analyzer', 'Smart Auto-Patch Retouch', 'Intelligent color sampling'],
+    },
   });
 
   const handleFile = useCallback((file: File) => {
@@ -39,37 +37,75 @@ export default function AiScreenshotEditor() {
   return (
     <SEOLandingPage
       onFileSelected={handleFile}
-      h1="AI Screenshot Editor — Smart Editing Tools"
-      tagline="Font detection, smart retouch & AI-powered editing."
-      intro="FlowNote brings AI-powered intelligence to screenshot editing. Detect fonts from any screenshot automatically, use smart auto-patch retouch to remove content seamlessly, and get intelligent color suggestions — all running locally in your browser with zero uploads."
+      h1="AI Screenshot Editor"
+      tagline="Font detection, smart retouch and intelligent fills — all in your browser."
+      intro="Most tools that put 'AI' in the name are either using it for marketing or sending your data to a cloud service to process it. FlowNote's AI features run entirely in your browser using canvas-based algorithms. No API calls, no uploads, no latency. The font analyzer, auto-patch retouch, and smart color sampling all happen locally — which also means your screenshots never leave your device."
       ctaLabel="Try AI Screenshot Editor"
-      features={[
-        { icon: <ScanSearch className="w-5 h-5" />, title: 'AI Font Analyzer', desc: 'Click any text in your screenshot. FlowNote\'s AI analyzes stroke width, ink density, and serif characteristics to identify the top 3 matching font families with confidence scores.' },
-        { icon: <Eraser className="w-5 h-5" />, title: 'Smart Auto-Patch Retouch', desc: 'AI-powered auto mode samples surrounding pixels to generate seamless, context-aware fills when removing text or objects from screenshots.' },
-        { icon: <Pipette className="w-5 h-5" />, title: 'Intelligent Color Sampling', desc: 'The smart eyedropper analyzes the pixel region around your click point to suggest the most representative color for perfect background matching.' },
-        { icon: <Wand2 className="w-5 h-5" />, title: 'Smart Filter Presets', desc: 'One-click AI-curated presets (Vivid, Noir, Vintage, Chrome, Dramatic) automatically adjust multiple parameters for optimal screenshot presentation.' },
-        { icon: <Brain className="w-5 h-5" />, title: 'Intelligent Annotation', desc: '18 AI-designed style templates with pre-optimized font/size/color combinations for professional-looking annotations with zero design effort.' },
-        { icon: <Sparkles className="w-5 h-5" />, title: 'Local AI Processing', desc: 'All AI features run entirely in your browser using client-side algorithms. No cloud API calls, no data uploads, complete privacy.' },
+      stats={[
+        { value: '100%', label: 'Local AI processing' },
+        { value: '21', label: 'Font profiles analyzed' },
+        { value: '0ms', label: 'Upload latency' },
+        { value: '0', label: 'Cloud APIs used' },
+      ]}
+      workflowSteps={[
+        { num: '1', title: 'Drop in a screenshot', desc: 'Any JPG, PNG, WEBP or GIF. Paste from clipboard or drag onto the canvas.' },
+        { num: '2', title: 'Activate font detection', desc: 'Open the Text tab, click the font analyzer, then click any text in your screenshot. Results appear in under a second.' },
+        { num: '3', title: 'Use smart retouch', desc: 'In the Retouch tab, switch to auto-patch mode. Paint over content you want removed — the AI fills the area using surrounding pixel data.' },
+        { num: '4', title: 'Export privately', desc: 'Download your edited screenshot. Nothing was sent to any server during the entire process.' },
       ]}
       sections={[
-        { heading: 'AI tools that run entirely in your browser', body: 'FlowNote\'s AI features are powered by client-side algorithms running in your browser via the Canvas API. The font analyzer uses statistical analysis of stroke characteristics. The auto-patch system uses pixel sampling and interpolation. No OpenAI API, no cloud processing — just smart in-browser intelligence that\'s private by design.' },
-        { heading: 'Font detection: how the AI works', body: 'When you activate the Font Analyzer and click on text in your screenshot, FlowNote samples a 30×30 pixel region around your click. It analyzes the stroke-to-background ratio (measuring font weight), detects vertical and horizontal strokes (identifying serif vs. sans-serif), and measures ink distribution (detecting monospaced fonts). These metrics are scored against 21 built-in font profiles to surface your top 3 matches.' },
-        { heading: 'Smart retouch: AI-powered content removal', body: 'The auto-patch retouch mode examines a 10-pixel border around your brush stroke to sample the surrounding background texture. It creates a weighted average of those neighboring pixels to fill the painted area with a blend that matches the background — reducing visible edit marks and producing cleaner results than a flat solid fill.' },
+        {
+          heading: 'How the font analyzer actually works',
+          body: 'When you click on text in a screenshot, the analyzer samples a 30×30 pixel region centered on your click. It computes the stroke-to-background ratio — this correlates with font weight, so a high ratio suggests bold or heavy weights, a low ratio suggests thin or light. It then analyzes the ink distribution pattern: mostly vertical strokes indicate a sans-serif or modern face; vertical plus horizontal strokes suggest serifs or slab serifs; roughly equal distribution in all directions suggests a monospace font. These metrics are scored against 21 built-in font profiles to generate a ranked list of matches with confidence percentages. It\'s not perfect — it struggles with very small text or heavily compressed screenshots — but for standard UI fonts at normal sizes, it\'s accurate enough to be genuinely useful.',
+        },
+        {
+          heading: 'What makes auto-patch retouch different',
+          body: 'Standard content removal in basic tools works like this: you paint over an area and it fills with a solid color. The result looks obviously edited. Auto-patch mode does something more useful. Before applying the fill, it samples a 10-pixel border around your brush stroke — all the pixels that immediately surround the area you\'re painting. It takes a weighted average of those neighboring pixels and uses that as the fill color, blending from the center outward. The result is a fill that fades naturally into the surrounding area, reducing the "patched" appearance. It works best when the background is relatively uniform — solid color backgrounds, gradients, simple textures. It\'s less effective on complex patterns, but even then, it produces better results than a flat fill.',
+        },
+        {
+          heading: 'Why local AI matters for screenshot tools',
+          body: 'Cloud-based AI tools for screenshot editing face a real trust problem. To process your screenshot, they have to send it to a server. For personal screenshots — one-off edits of random images — that might feel acceptable. But professional screenshots often contain sensitive content: API keys in terminal windows, customer data in dashboards, confidential business information in spreadsheets. Sending those to a third-party server for AI processing creates a data exposure risk that most users don\'t think about until it\'s too late. FlowNote\'s approach eliminates that risk entirely. The AI processing happens in your browser. It never leaves your machine.',
+        },
+      ]}
+      useCases={[
+        {
+          role: 'Designer',
+          scenario: 'I was trying to match the typography in a competitor\'s UI screenshot for a comparison document. Instead of squinting at font characteristics, I used FlowNote\'s font analyzer to identify it directly from the screenshot.',
+          outcome: 'Font identified in two seconds. Comparison document typography matched perfectly.',
+        },
+        {
+          role: 'Developer',
+          scenario: 'I had a terminal screenshot with a visible environment variable. I needed to remove it cleanly — not just paint a black box over it, but make it look like the variable was never there.',
+          outcome: 'Auto-patch retouch blended the fill with the terminal background. Near-invisible edit.',
+        },
+        {
+          role: 'Technical Writer',
+          scenario: 'I was updating documentation screenshots for a UI that had been redesigned. The new UI used different fonts than the previous version. I needed to match my annotation typography to the new design.',
+          outcome: 'Font analyzer identified the new UI typeface. Annotations updated to match across the entire documentation set.',
+        },
+      ]}
+      features={[
+        { icon: <ScanSearch className="w-5 h-5" />, title: 'AI Font Analyzer', desc: 'Identifies fonts by analyzing stroke weight, ink distribution and serif characteristics. Scores against 21 font profiles. Results in under a second.' },
+        { icon: <Eraser className="w-5 h-5" />, title: 'Smart Auto-Patch Retouch', desc: 'Samples the 10-pixel border around your brush stroke and creates a blended fill that fades into the surrounding background. Cleaner than solid fill for natural-looking edits.' },
+        { icon: <Pipette className="w-5 h-5" />, title: 'Intelligent Color Sampling', desc: 'The eyedropper analyzes the pixel neighborhood around your click, not just the single pixel, to suggest the most representative background color for retouch fills.' },
+        { icon: <Wand2 className="w-5 h-5" />, title: 'AI-Curated Filter Presets', desc: 'Vivid, Noir, Vintage, Chrome, Dramatic — each preset applies optimized parameter combinations across brightness, contrast, saturation and hue simultaneously.' },
+        { icon: <Brain className="w-5 h-5" />, title: 'Client-Side Processing', desc: 'All AI features run in your browser via the Canvas API. No cloud services, no API keys required, no usage limits. Your screenshots never leave your device.' },
+        { icon: <Zap className="w-5 h-5" />, title: 'Zero Latency', desc: 'Local processing means instant results. No upload/download round trip. Font analysis returns in milliseconds.' },
       ]}
       faq={[
-        { q: 'What AI features does FlowNote have?', a: 'FlowNote includes an AI font analyzer that detects fonts from your screenshot, a smart auto-patch retouch tool that generates context-aware fills, and an intelligent color sampler.' },
-        { q: 'Does the AI send my screenshot to a server?', a: 'No. All AI processing is done locally in your browser. Nothing is uploaded. FlowNote has no backend AI API.' },
-        { q: 'How accurate is the font analyzer?', a: 'The font analyzer works best on clean, high-contrast text. It analyzes stroke width, serif characteristics, and ink density to match against 21 font profiles, typically identifying common UI fonts (Inter, Roboto, etc.) with high confidence.' },
-        { q: 'What is auto-patch retouch?', a: 'Auto-patch samples the pixels surrounding your brush stroke and creates a blended fill that matches the background. This produces smoother, less visible edits compared to a flat color fill.' },
-        { q: 'Is the AI screenshot editor free?', a: 'Yes, completely free. All AI features are included with no account or payment required.' },
+        { q: 'What AI features does FlowNote have?', a: 'Three: the font analyzer (identifies fonts from screenshot text), smart auto-patch retouch (context-aware background fill for content removal), and intelligent color sampling (pixel neighborhood analysis for better color matching).' },
+        { q: 'Does the AI send my screenshot to a server?', a: 'No. Every AI feature runs locally in your browser using the HTML5 Canvas API. Nothing is sent anywhere.' },
+        { q: 'How accurate is the font analyzer?', a: 'Accurate enough to be useful for common UI fonts (Inter, Roboto, SF Pro, Geist) at normal screen sizes. It struggles with very small text, heavily compressed screenshots, or uncommon decorative fonts.' },
+        { q: 'When should I use auto-patch vs. solid fill?', a: 'Use auto-patch when the background behind the content you\'re removing is relatively uniform — solid colors, simple gradients. It produces a more natural blend. Use solid fill when you want hard redaction and don\'t care about visual smoothness.' },
+        { q: 'Is the AI available without a paid plan?', a: 'Yes, all AI features are completely free. There\'s no paid tier.' },
       ]}
       relatedLinks={[
         { href: '/free-screenshot-editor-online', label: 'Free Screenshot Editor' },
-        { href: '/annotate-screenshot-online', label: 'Annotate Screenshot' },
         { href: '/blur-screenshot-online', label: 'Blur Screenshot' },
+        { href: '/annotate-screenshot-online', label: 'Annotate Screenshot' },
         { href: '/screenshot-editor-no-signup', label: 'No Signup Editor' },
       ]}
-      keywords={['AI screenshot editor', 'AI font analyzer', 'smart screenshot editor', 'AI powered screenshot tool', 'intelligent screenshot editing']}
+      keywords={['AI screenshot editor', 'AI font analyzer', 'smart screenshot editor', 'AI powered screenshot tool']}
     />
   );
 }

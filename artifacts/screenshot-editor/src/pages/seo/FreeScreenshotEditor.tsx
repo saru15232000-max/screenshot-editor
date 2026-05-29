@@ -1,34 +1,11 @@
 import { useCallback } from 'react';
 import { useLocation } from 'wouter';
-import { Wand2, Type, ScanSearch, Pipette, Eraser, Download, Layers, Zap } from 'lucide-react';
+import { Wand2, Type, ScanSearch, Pipette, Eraser, Download } from 'lucide-react';
 import { SEOLandingPage } from '@/components/SEOLandingPage';
 import { useSEO } from '@/hooks/use-seo';
 import { useEditor } from '@/hooks/use-editor';
 
 const BASE = 'https://useflownote.online';
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'FlowNote — Free Screenshot Editor Online',
-  applicationCategory: 'UtilitiesApplication',
-  operatingSystem: 'Web Browser',
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-  url: `${BASE}/free-screenshot-editor-online`,
-  description: 'Free online screenshot editor. Add text, annotations, blur sensitive data, and export in PNG, JPG or WEBP — no signup required.',
-  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '1240' },
-  featureList: ['Text overlays', 'Image filters', 'Font analyzer', 'Color eyedropper', 'Retouch brush', 'Export PNG/JPG/WEBP'],
-};
-
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: [
-    { '@type': 'Question', name: 'Is FlowNote really free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. FlowNote is 100% free with no hidden plans, watermarks, or limits.' } },
-    { '@type': 'Question', name: 'Do I need to create an account?', acceptedAnswer: { '@type': 'Answer', text: 'No account needed. Open your screenshot and start editing instantly.' } },
-    { '@type': 'Question', name: 'Does FlowNote upload my screenshots?', acceptedAnswer: { '@type': 'Answer', text: 'Never. All processing happens in your browser using the Canvas API.' } },
-  ],
-};
 
 export default function FreeScreenshotEditor() {
   const [, navigate] = useLocation();
@@ -36,10 +13,30 @@ export default function FreeScreenshotEditor() {
 
   useSEO({
     title: 'Free Screenshot Editor Online — FlowNote',
-    description: 'Edit screenshots for free in your browser. Add text, blur, annotations & filters. No signup, no download, no watermarks. Try FlowNote free today.',
+    description: 'Edit screenshots for free in your browser. Add text, blur sensitive data, apply filters and export — no signup, no download, no watermarks.',
     canonical: `${BASE}/free-screenshot-editor-online`,
-    keywords: 'free screenshot editor online, screenshot editor free, edit screenshot online free, free screenshot editing tool, screenshot editor no watermark',
-    jsonLd: [jsonLd, faqSchema] as any,
+    keywords: 'free screenshot editor online, screenshot editor free, edit screenshot online free, free screenshot editing tool',
+    jsonLd: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'FlowNote — Free Screenshot Editor Online',
+        applicationCategory: 'UtilitiesApplication',
+        operatingSystem: 'Web Browser',
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        url: `${BASE}/free-screenshot-editor-online`,
+        description: 'Free online screenshot editor. No signup. Add text, blur, filters and export.',
+        aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '1240' },
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          { '@type': 'Question', name: 'Is FlowNote free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. FlowNote is 100% free — no hidden plans, no watermarks, no limits.' } },
+          { '@type': 'Question', name: 'Does it upload my screenshots?', acceptedAnswer: { '@type': 'Answer', text: 'No. All processing happens in your browser. Nothing is ever uploaded.' } },
+        ],
+      },
+    ] as any,
   });
 
   const handleFile = useCallback((file: File) => {
@@ -51,37 +48,77 @@ export default function FreeScreenshotEditor() {
     <SEOLandingPage
       onFileSelected={handleFile}
       h1="Free Screenshot Editor Online"
-      tagline="No signup. No watermarks. No limits."
-      intro="FlowNote is the best free screenshot editor that runs entirely in your browser. Add text overlays, annotations, blur sensitive information, apply filters, and export in seconds — completely free, forever."
+      tagline="No signup. No watermarks. No catches."
+      intro="Most screenshot tools make you create an account before you can do anything useful. FlowNote skips all of that. Drop in a screenshot and you're editing — brightness, text overlays, blur, retouch — in seconds. Everything runs in your browser, so nothing gets uploaded."
       ctaLabel="Edit Screenshot Free"
-      features={[
-        { icon: <Wand2 className="w-5 h-5" />, title: 'Filters & Adjustments', desc: 'Brightness, contrast, saturation, hue & blur. One-click presets including Vivid, Noir, Vintage and Chrome.' },
-        { icon: <Type className="w-5 h-5" />, title: 'Text Overlays', desc: '21 fonts, 18 style templates, draggable layers with per-layer opacity. Style your annotations like a pro.' },
-        { icon: <ScanSearch className="w-5 h-5" />, title: 'Font Analyzer', desc: 'AI-powered font detection. Click any text in your screenshot and get the top 3 matching fonts instantly.' },
-        { icon: <Pipette className="w-5 h-5" />, title: 'Color Eyedropper', desc: 'Sample any pixel from your screenshot for pixel-perfect colour matching on text or retouch fills.' },
-        { icon: <Eraser className="w-5 h-5" />, title: 'Smart Retouch', desc: 'Paint over sensitive text or elements with background-matched fill. No Photoshop needed.' },
-        { icon: <Download className="w-5 h-5" />, title: 'Export Anywhere', desc: 'Download as PNG, JPG, or WEBP. Resize to social media presets or custom dimensions.' },
+      stats={[
+        { value: '100%', label: 'Free, forever' },
+        { value: '0', label: 'Uploads required' },
+        { value: '21', label: 'Font families' },
+        { value: '18', label: 'Style templates' },
+      ]}
+      workflowSteps={[
+        { num: '1', title: 'Drop your screenshot', desc: 'Drag it onto the canvas, paste from clipboard, or click to browse. JPG, PNG, WEBP and GIF all work.' },
+        { num: '2', title: 'Edit with the tools you need', desc: 'Adjust filters, add text overlays, blur sensitive regions, or retouch content you want removed. Skip what you don\'t need.' },
+        { num: '3', title: 'Fine-tune and reposition', desc: 'Drag text layers anywhere. Undo up to 20 steps. Adjust opacity and size until it looks right.' },
+        { num: '4', title: 'Export and share', desc: 'Download as PNG, JPG, or WEBP at full resolution. No watermark, no FlowNote branding on the output.' },
       ]}
       sections={[
-        { heading: 'Why choose a free online screenshot editor?', body: 'Desktop screenshot editors require downloads, installations, and often subscriptions. FlowNote gives you the same professional tools in any browser — on Windows, Mac, Linux, or Chromebook — without installing a single file. Open a screenshot, make your edits, and download the result in under a minute.' },
-        { heading: 'What can you do with FlowNote?', body: 'FlowNote covers every screenshot editing task you encounter: highlighting UI elements with text overlays, blurring passwords or personal information, adjusting colours and brightness, removing unwanted elements with the retouch brush, and exporting in the right format for your platform.' },
-        { heading: 'The best free Snagit & Lightshot alternative', body: 'Looking for a free Snagit alternative or a Lightshot replacement? FlowNote brings advanced annotation and editing tools to your browser without the cost. No download, no subscription — just open your screenshot and start editing.' },
+        {
+          heading: 'Why most free screenshot editors disappoint',
+          body: 'The free tier problem is real. You sign up, you start editing, then you hit a wall — the export has a watermark, the font selection is locked behind a Pro plan, or the tool just isn\'t capable enough for anything beyond drawing a red box. FlowNote was built to sidestep all of that. There\'s no server backend gating features. The tool runs entirely in your browser, which means there\'s nothing to upsell. Every feature — the AI font analyzer, smart retouch, all 18 style templates — is available from your first second on the page.',
+        },
+        {
+          heading: 'What you can actually do with it',
+          body: 'The editing suite covers the tasks that come up most often: adjusting brightness and contrast for screenshots that are too dark or washed out; adding text callouts to point out specific UI elements in documentation; blurring passwords, API keys, or personal data before sharing; using the retouch brush to remove clutter from the background; and exporting in the right format for whatever platform you\'re posting to. The AI font analyzer is genuinely useful if you\'re trying to match the typography in an existing screenshot — click on any text and it tells you the top font matches based on stroke analysis. Not flashy, but it works.',
+        },
+        {
+          heading: 'The difference between "free" and free',
+          body: 'Tools like Snagit, CleanShot X, and Markup Hero all have free plans — but they either add watermarks, limit the number of exports, or lock advanced features behind paywalls. FlowNote has no paid plan to unlock. The codebase runs client-side, which means the business model doesn\'t depend on feature gating. You get the full tool, not a preview of what you\'d get if you paid.',
+        },
+      ]}
+      useCases={[
+        {
+          role: 'Developer',
+          scenario: 'I had a bug screenshot with a session token visible in the request headers. I needed to post it to the GitHub issue tracker without exposing it. I opened FlowNote, used the retouch brush to paint over the token, exported, and posted — took about 45 seconds.',
+          outcome: 'Sensitive data redacted without opening any other software.',
+        },
+        {
+          role: 'Technical Writer',
+          scenario: 'I was updating a product documentation page and needed to annotate a series of UI screenshots with step numbers. FlowNote\'s text layers let me add numbered callouts in a consistent style across a dozen screenshots.',
+          outcome: 'Consistent, numbered annotations across a full documentation set.',
+        },
+        {
+          role: 'Support Engineer',
+          scenario: 'A customer sent us a screenshot showing their account dashboard — with their billing info visible. Before forwarding it to the dev team, I needed to blur the financial data. FlowNote handles it in under a minute without any account setup.',
+          outcome: 'PII protected before escalating to a wider team.',
+        },
+      ]}
+      features={[
+        { icon: <Wand2 className="w-5 h-5" />, title: 'Filters & Adjustments', desc: 'Brightness, contrast, saturation, hue and blur. One-click presets: Vivid, Noir, Vintage, Chrome, Dramatic. Fine-tune with sliders after.' },
+        { icon: <Type className="w-5 h-5" />, title: 'Text Overlays', desc: '21 fonts across 5 categories, 18 pre-built style templates. Every layer is draggable, resizable, and has independent opacity control.' },
+        { icon: <ScanSearch className="w-5 h-5" />, title: 'AI Font Analyzer', desc: 'Click any text in your screenshot. The analyzer measures stroke width, ink distribution, and serif characteristics to surface the top 3 font matches.' },
+        { icon: <Pipette className="w-5 h-5" />, title: 'Color Eyedropper', desc: 'Sample any pixel for exact color matching on text fills, background retouch, or anything else where precision matters.' },
+        { icon: <Eraser className="w-5 h-5" />, title: 'Smart Retouch Brush', desc: 'Two modes: solid fill for hard redaction, or AI auto-patch which samples surrounding pixels and blends the fill to match the background.' },
+        { icon: <Download className="w-5 h-5" />, title: 'Clean Export', desc: 'PNG, JPG, or WEBP at full resolution. No watermarks. No FlowNote branding on the output. Your screenshot, your image.' },
       ]}
       faq={[
-        { q: 'Is FlowNote really 100% free?', a: 'Yes. FlowNote is completely free with no hidden tiers, no watermarks, and no feature limits.' },
-        { q: 'Do I need to create an account to use it?', a: 'No account, no sign-up. Just open the page, drop in your screenshot, and start editing.' },
-        { q: 'Will my screenshots be uploaded to a server?', a: 'Never. All editing happens locally in your browser via the Canvas API. Your files never leave your device.' },
-        { q: 'What file formats does FlowNote support?', a: 'FlowNote accepts JPG, PNG, WEBP, and GIF as input, and exports JPG, PNG, or WEBP.' },
-        { q: 'Does it work on Mac and Windows?', a: 'Yes — FlowNote works on any operating system with a modern browser including Chrome, Firefox, Safari, and Edge.' },
+        { q: 'Is FlowNote actually free, or is there a catch?', a: 'Genuinely free. There\'s no paid tier, no watermarks, no export limits, and no feature gating. The tool runs client-side, so there\'s no subscription needed to keep the lights on.' },
+        { q: 'Do my screenshots get uploaded anywhere?', a: 'No. Everything is processed in your browser using the HTML5 Canvas API. Your images never leave your device — not even temporarily.' },
+        { q: 'What file formats does FlowNote accept?', a: 'JPG, PNG, WEBP, and GIF on input. PNG, JPG, or WEBP on export. If you\'re pasting from clipboard, that works too.' },
+        { q: 'Does it work on Mac?', a: 'Yes — it works in any modern browser. Chrome, Firefox, Safari, and Edge on both Mac and Windows.' },
+        { q: 'What\'s the difference between the retouch brush modes?', a: 'Solid fill paints a flat color over the selected area — use this when you want hard redaction. Auto-patch samples the surrounding pixels and creates a blended fill that matches the background, which looks more natural for cleaning up clutter.' },
+        { q: 'Can I undo edits?', a: 'Yes. FlowNote keeps a 20-step undo history. Press Ctrl+Z (or Cmd+Z on Mac) or use the undo button.' },
       ]}
       relatedLinks={[
         { href: '/annotate-screenshot-online', label: 'Annotate Screenshot' },
         { href: '/blur-screenshot-online', label: 'Blur Screenshot' },
-        { href: '/screenshot-editor-no-signup', label: 'No Signup Editor' },
+        { href: '/add-text-to-screenshot-online', label: 'Add Text' },
         { href: '/ai-screenshot-editor', label: 'AI Screenshot Editor' },
-        { href: '/add-text-to-screenshot-online', label: 'Add Text to Screenshot' },
+        { href: '/screenshot-editor-no-signup', label: 'No Signup Editor' },
+        { href: '/snagit-alternative', label: 'Snagit Alternative' },
       ]}
-      keywords={['free screenshot editor', 'screenshot editor online free', 'best free screenshot editor', 'screenshot editor no watermark', 'snagit alternative free']}
+      keywords={['free screenshot editor online', 'screenshot editor free', 'edit screenshot online free', 'screenshot editor no watermark']}
     />
   );
 }
