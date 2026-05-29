@@ -1,0 +1,204 @@
+You are a world-class SaaS UI/UX designer and frontend engineer.
+
+Transform my existing app into a premium modern SaaS platform called “FlowNote”.
+
+STYLE GOAL:
+The design should feel like a mix of:
+- Notion
+- Linear
+- Arc Browser
+- Canva
+- Framer
+
+The UI must look premium, minimal, futuristic, smooth, and startup-quality.
+
+====================================================
+BRANDING
+====================================================
+
+App Name:
+FlowNote
+
+Tagline:
+Capture. Organize. Flow.
+
+Brand Personality:
+- Clean
+- Smart
+- Productive
+- Creative
+- AI-first
+- Minimal
+
+====================================================
+COLOR SYSTEM
+====================================================
+
+Primary Gradient:
+#4F46E5 → #7C3AED
+
+Dark Background:
+#0B1020
+
+Card Background:
+#111827
+
+Border:
+rgba(255,255,255,0.08)
+
+Text Primary:
+#FFFFFF
+
+Text Secondary:
+#94A3B8
+
+Accent Glow:
+rgba(124,58,237,0.35)
+
+====================================================
+TYPOGRAPHY
+====================================================
+
+Use:
+- Inter
+OR
+- Satoshi
+OR
+- Geist
+
+Typography Style:
+- Large bold headings
+- Clean spacing
+- Smooth hierarchy
+- Minimal text clutter
+- Modern startup look
+
+Headings:
+font-weight: 700-800
+
+Body:
+font-weight: 400-500
+
+Buttons:
+slightly rounded with soft hover animations
+
+====================================================
+UI STYLE
+====================================================
+
+Use:
+- Glassmorphism
+- Soft shadows
+- Rounded corners (16px–24px)
+- Smooth transitions
+- Blur effects
+- Minimal borders
+- Premium spacing
+
+Animations:
+- subtle hover lift
+- smooth opacity transitions
+- soft glow on active elements
+
+Avoid:
+- outdated bootstrap look
+- sharp corners
+- heavy borders
+- too many colors
+- cluttered layouts
+
+====================================================
+LAYOUT
+====================================================
+
+Landing Page:
+- modern hero section
+- gradient glow background
+- clean navbar
+- animated CTA buttons
+- product preview mockup
+- feature sections
+- pricing cards
+- testimonials
+- footer
+
+Dashboard:
+- clean sidebar
+- floating panels
+- minimal toolbar
+- modern cards
+- AI workspace feel
+- smooth responsive layout
+
+====================================================
+FEATURES SECTION DESIGN
+====================================================
+
+Cards should include:
+- icon
+- feature title
+- short description
+- hover animation
+- gradient border glow
+
+====================================================
+BUTTON STYLE
+====================================================
+
+Primary Button:
+Gradient background
+Soft shadow
+Hover scale effect
+
+Secondary Button:
+Transparent dark background
+Subtle border
+Blur effect
+
+====================================================
+ICONS
+====================================================
+
+Use:
+- Lucide Icons
+OR
+- Phosphor Icons
+
+Style:
+minimal line icons
+
+====================================================
+EXTRA DETAILS
+====================================================
+
+Add:
+- subtle background gradients
+- blur circles
+- premium empty states
+- loading skeletons
+- hover interactions
+- beautiful spacing system
+
+Make everything feel:
+- Silicon Valley startup quality
+- polished like a funded SaaS startup
+- extremely modern and clean
+
+====================================================
+IMPORTANT
+====================================================
+
+Rename everything from old branding to:
+“FlowNote”
+
+Update:
+- logo text
+- navbar
+- metadata
+- titles
+- buttons
+- dashboard
+- favicon placeholder
+- footer branding
+
+The final UI should look production-ready and visually impressive.

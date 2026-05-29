@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
@@ -57,70 +57,66 @@
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
 
-  /* Dark studio palette matching Lumina */
-  --background: 225 21% 7%;
+  /* FlowNote dark palette — deep navy with indigo/violet primary */
+  --background: 228 47% 8%;
   --foreground: 210 40% 98%;
 
-  --card: 225 21% 10%;
+  --card: 222 40% 10%;
   --card-foreground: 210 40% 98%;
-  --card-border: 225 21% 14%;
+  --card-border: 222 40% 14%;
 
-  --popover: 225 21% 10%;
+  --popover: 222 40% 10%;
   --popover-foreground: 210 40% 98%;
-  --popover-border: 225 21% 14%;
+  --popover-border: 222 40% 14%;
 
-  /* Teal accent */
-  --primary: 173 80% 40%;
-  --primary-foreground: 173 100% 10%;
+  /* Indigo/violet primary */
+  --primary: 243 75% 59%;
+  --primary-foreground: 243 100% 96%;
 
-  --secondary: 225 21% 14%;
+  --secondary: 222 40% 14%;
   --secondary-foreground: 210 40% 98%;
 
-  --muted: 225 21% 14%;
-  --muted-foreground: 215 20.2% 65.1%;
+  --muted: 222 40% 14%;
+  --muted-foreground: 215 20% 65%;
 
-  --accent: 173 80% 40%;
-  --accent-foreground: 173 100% 10%;
+  --accent: 263 70% 58%;
+  --accent-foreground: 263 100% 96%;
 
   --destructive: 0 62.8% 50%;
   --destructive-foreground: 210 40% 98%;
 
-  --border: 225 21% 14%;
-  --input: 225 21% 18%;
-  --ring: 173 80% 40%;
+  --border: 222 40% 14%;
+  --input: 222 40% 17%;
+  --ring: 243 75% 59%;
 
-  --sidebar: 225 21% 10%;
+  --sidebar: 222 40% 10%;
   --sidebar-foreground: 210 40% 98%;
-  --sidebar-border: 225 21% 14%;
-  --sidebar-primary: 173 80% 40%;
-  --sidebar-primary-foreground: 173 100% 10%;
-  --sidebar-accent: 225 21% 14%;
+  --sidebar-border: 222 40% 14%;
+  --sidebar-primary: 243 75% 59%;
+  --sidebar-primary-foreground: 243 100% 96%;
+  --sidebar-accent: 222 40% 14%;
   --sidebar-accent-foreground: 210 40% 98%;
-  --sidebar-ring: 173 80% 40%;
+  --sidebar-ring: 243 75% 59%;
 
-  --popover: 225 21% 10%;
-  --popover-foreground: 210 40% 98%;
-  --popover-border: 225 21% 14%;
-
-  --chart-1: 173 80% 40%;
-  --chart-2: 200 70% 55%;
-  --chart-3: 250 60% 60%;
+  --chart-1: 243 75% 59%;
+  --chart-2: 263 70% 58%;
+  --chart-3: 200 70% 55%;
   --chart-4: 300 55% 55%;
   --chart-5: 30 80% 55%;
 
   --app-font-sans: 'Inter', sans-serif;
   --app-font-serif: Georgia, serif;
   --app-font-mono: Menlo, monospace;
-  --radius: 0.5rem;
+  --radius: 0.625rem;
 
-  --shadow-2xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.2);
-  --shadow-xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.2);
-  --shadow-sm: 0px 2px 0px 0px hsl(0 0% 0% / 0.2), 0px 1px 2px -1px hsl(0 0% 0% / 0.2);
-  --shadow: 0px 2px 0px 0px hsl(0 0% 0% / 0.2), 0px 1px 2px -1px hsl(0 0% 0% / 0.2);
-  --shadow-md: 0px 2px 0px 0px hsl(0 0% 0% / 0.2), 0px 2px 4px -1px hsl(0 0% 0% / 0.2);
-  --shadow-lg: 0px 2px 0px 0px hsl(0 0% 0% / 0.2), 0px 4px 6px -1px hsl(0 0% 0% / 0.2);
-  --shadow-xl: 0px 2px 0px 0px hsl(0 0% 0% / 0.2), 0px 8px 10px -1px hsl(0 0% 0% / 0.2);
-  --shadow-2xl: 0px 2px 0px 0px hsl(0 0% 0% / 0.2);
+  --shadow-2xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.3);
+  --shadow-xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.3);
+  --shadow-sm: 0px 2px 0px 0px hsl(0 0% 0% / 0.3), 0px 1px 2px -1px hsl(0 0% 0% / 0.3);
+  --shadow: 0px 2px 0px 0px hsl(0 0% 0% / 0.3), 0px 1px 2px -1px hsl(0 0% 0% / 0.3);
+  --shadow-md: 0px 2px 0px 0px hsl(0 0% 0% / 0.3), 0px 2px 4px -1px hsl(0 0% 0% / 0.3);
+  --shadow-lg: 0px 2px 0px 0px hsl(0 0% 0% / 0.3), 0px 4px 6px -1px hsl(0 0% 0% / 0.3);
+  --shadow-xl: 0px 2px 0px 0px hsl(0 0% 0% / 0.3), 0px 8px 10px -1px hsl(0 0% 0% / 0.3);
+  --shadow-2xl: 0px 2px 0px 0px hsl(0 0% 0% / 0.3);
 
   --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
@@ -143,4 +139,31 @@
   body {
     @apply font-sans antialiased bg-background text-foreground;
   }
+}
+
+/* FlowNote premium utilities */
+.fn-gradient-text {
+  background: linear-gradient(135deg, #4F46E5, #7C3AED);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.fn-gradient-bg {
+  background: linear-gradient(135deg, #4F46E5, #7C3AED);
+}
+
+.fn-glass {
+  background: rgba(17, 24, 39, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.fn-glow {
+  box-shadow: 0 0 40px rgba(124, 58, 237, 0.35);
+}
+
+.fn-card-glow:hover {
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.4), 0 8px 32px rgba(79, 70, 229, 0.15);
 }

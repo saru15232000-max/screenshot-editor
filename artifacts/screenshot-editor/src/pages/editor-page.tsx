@@ -4,7 +4,7 @@ import { Sidebar } from '../components/Sidebar';
 import { CanvasWorkspace } from '../components/CanvasWorkspace';
 import { LandingPage } from '../components/LandingPage';
 import { toast } from 'sonner';
-import { ScreenShare, Download, UploadCloud } from 'lucide-react';
+import { Layers, Download, UploadCloud } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -77,8 +77,13 @@ export default function EditorPage() {
 
       {/* Top bar */}
       <header className="h-16 border-b border-border bg-card flex items-center justify-between px-4 shrink-0 z-10">
-        <div className="flex items-center gap-2 text-primary font-bold tracking-tight text-xl">
-          <ScreenShare className="w-6 h-6" /> Snapmark
+        <div className="flex items-center gap-2.5 font-bold tracking-tight text-xl">
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #4F46E5, #7C3AED)' }}>
+            <Layers className="w-3.5 h-3.5 text-white" />
+          </div>
+          <span style={{ background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+            FlowNote
+          </span>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-sm text-muted-foreground hidden md:flex items-center gap-2">
