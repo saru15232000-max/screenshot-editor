@@ -52,22 +52,24 @@ export function CanvasWorkspace({ editor }: { editor: EditorContextType }) {
   const undoStackRef = useRef<ImageData[]>([]);
   const isRetouchingRef = useRef(false);
 
-  // Expose canvas ref for download / text positioning
+  // Expose refs to editor (for Sidebar undo + download)
   (editor as any)._canvasRef = canvasRef;
+  (editor as any)._offCanvasRef = offCanvasRef;
 
-  // Build offscreen canvas when image changes
+  // ── Build offscreen canvas when image changes ──────────────────────────────
   useEffect(() => {
     if (!editor.image) return;
     const off = document.createElement('canvas');
-    off.width = editor.image.width;
+    off.width  = editor.image.width;
     off.height = editor.image.height;
-    const ctx = off.getContext('2d')!;
-    ctx.drawImage(editor.image, 0, 0);
+    off.getContext('2d')!.drawImage(editor.image, 0, 0);
     offCanvasRef.current = off;
     undoStackRef.current = [];
+    (editor as any)._undoCount = 0;
     drawFromOff();
   }, [editor.image]);
 
+  // ── Draw visible canvas from offscreen + adjustments + transform ──────────
   const drawFromOff = useCallback(() => {
     const off = offCanvasRef.current;
     if (!off || !canvasRef.current) return;
@@ -75,12 +77,12 @@ export function CanvasWorkspace({ editor }: { editor: EditorContextType }) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const srcW = editor.dimensions.width || off.width;
+    const srcW = editor.dimensions.width  || off.width;
     const srcH = editor.dimensions.height || off.height;
     let outW = srcW, outH = srcH;
     if (editor.transform.rotate % 180 !== 0) { outW = srcH; outH = srcW; }
 
-    canvas.width = outW;
+    canvas.width  = outW;
     canvas.height = outH;
     ctx.clearRect(0, 0, outW, outH);
     ctx.save();
@@ -90,207 +92,229 @@ export function CanvasWorkspace({ editor }: { editor: EditorContextType }) {
     ctx.filter = buildFilter(editor.adjustments);
     ctx.drawImage(off, -srcW / 2, -srcH / 2, srcW, srcH);
     ctx.restore();
-
-    // Draw text annotations on top
-    editor.annotations.forEach(ann => {
-      const displayScale = canvas.getBoundingClientRect().width / canvas.width || 1;
-      ctx.save();
-      ctx.globalAlpha = ann.opacity / 100;
-      ctx.font = `${ann.italic ? 'italic ' : ''}${ann.bold ? 'bold ' : ''}${ann.fontSize}px ${ann.fontFamily}`;
-      ctx.fillStyle = ann.color;
-      ctx.textAlign = ann.align;
-      ctx.textBaseline = 'top';
-      ctx.fillText(ann.text, ann.x, ann.y);
-      ctx.restore();
-    });
-  }, [editor.dimensions, editor.adjustments, editor.transform, editor.annotations]);
+    // NOTE: text is NOT drawn here — only HTML overlays render during editing.
+    // Text is baked onto canvas only at download time.
+  }, [editor.dimensions, editor.adjustments, editor.transform]);
 
   useEffect(() => {
     const raf = requestAnimationFrame(drawFromOff);
     return () => cancelAnimationFrame(raf);
   }, [drawFromOff]);
 
-  // Canvas coordinate mapping
+  // Expose drawFromOff (for download in editor-page)
+  (editor as any)._drawFromOff = drawFromOff;
+
+  // ── Coordinate mapping ────────────────────────────────────────────────────
   const canvasToPixel = useCallback((clientX: number, clientY: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
     const rect = canvas.getBoundingClientRect();
     return {
-      x: Math.round((clientX - rect.left) * (canvas.width / rect.width)),
-      y: Math.round((clientY - rect.top) * (canvas.height / rect.height)),
+      x: (clientX - rect.left) * (canvas.width  / rect.width),
+      y: (clientY - rect.top)  * (canvas.height / rect.height),
     };
   }, []);
 
-  // Eyedropper — sample pixel from offscreen canvas
-  const handleEyedropper = useCallback((clientX: number, clientY: number) => {
+  // ── Retouch brush ────────────────────────────────────────────────────────
+  const pushUndo = useCallback(() => {
     const off = offCanvasRef.current;
     if (!off) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const px = Math.round((clientX - rect.left) * (off.width / rect.width));
-    const py = Math.round((clientY - rect.top) * (off.height / rect.height));
-    const offCtx = off.getContext('2d')!;
-    const data = offCtx.getImageData(px, py, 1, 1).data;
-    const hex = `#${[data[0], data[1], data[2]].map(v => v.toString(16).padStart(2, '0')).join('')}`;
-    editor.setFillColor(hex);
-    editor.setEyedropperActive(false);
+    const snap = off.getContext('2d')!.getImageData(0, 0, off.width, off.height);
+    undoStackRef.current.push(snap);
+    if (undoStackRef.current.length > MAX_UNDO) undoStackRef.current.shift();
+    (editor as any)._undoCount = undoStackRef.current.length;
   }, [editor]);
 
-  // Retouch brush
-  const handleRetouchMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+  const applyBrush = useCallback((clientX: number, clientY: number) => {
+    const off = offCanvasRef.current;
+    const canvas = canvasRef.current;
+    if (!off || !canvas) return;
+    const offCtx = off.getContext('2d')!;
+    const rect    = canvas.getBoundingClientRect();
+    const scaleX  = canvas.width  / rect.width;
+    const scaleY  = canvas.height / rect.height;
+    const cx = (clientX - rect.left) * scaleX;
+    const cy = (clientY - rect.top)  * scaleY;
+    const offScaleX = off.width  / canvas.width;
+    const offScaleY = off.height / canvas.height;
+    const offCx = cx * offScaleX;
+    const offCy = cy * offScaleY;
+    const offRadius = editor.brushSize * Math.max(offScaleX, offScaleY);
+    applyFillPatch(offCtx, offCx, offCy, offRadius, editor.fillColor);
+    drawFromOff();
+  }, [editor.brushSize, editor.fillColor, drawFromOff]);
+
+  const handleRetouchMouseDown = useCallback((e: React.MouseEvent) => {
     if (!editor.retouchActive) return;
-    const off = offCanvasRef.current;
-    if (!off) return;
+    e.stopPropagation();
+    pushUndo();
     isRetouchingRef.current = true;
-    // Save undo snapshot
-    const offCtx = off.getContext('2d')!;
-    if (undoStackRef.current.length >= MAX_UNDO) undoStackRef.current.shift();
-    undoStackRef.current.push(offCtx.getImageData(0, 0, off.width, off.height));
+    applyBrush(e.clientX, e.clientY);
+  }, [editor.retouchActive, pushUndo, applyBrush]);
 
-    const { x, y } = canvasToPixel(e.clientX, e.clientY);
-    const scaleX = off.width / (canvasRef.current?.getBoundingClientRect().width ?? 1);
-    const radius = editor.brushSize * scaleX;
-    applyFillPatch(offCtx, x, y, radius, editor.fillColor);
-    drawFromOff();
-  }, [editor, canvasToPixel, drawFromOff]);
+  const handleRetouchMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!editor.retouchActive || !isRetouchingRef.current) return;
+    applyBrush(e.clientX, e.clientY);
+  }, [editor.retouchActive, applyBrush]);
 
-  const handleRetouchMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isRetouchingRef.current || !editor.retouchActive) return;
+  const handleRetouchMouseUp = useCallback(() => { isRetouchingRef.current = false; }, []);
+
+  // Expose undo handler to Sidebar
+  (editor as any)._handleUndo = useCallback(() => {
     const off = offCanvasRef.current;
-    if (!off) return;
-    const offCtx = off.getContext('2d')!;
-    const { x, y } = canvasToPixel(e.clientX, e.clientY);
-    const scaleX = off.width / (canvasRef.current?.getBoundingClientRect().width ?? 1);
-    const radius = editor.brushSize * scaleX;
-    applyFillPatch(offCtx, x, y, radius, editor.fillColor);
-    drawFromOff();
-  }, [editor, canvasToPixel, drawFromOff]);
-
-  const handleRetouchMouseUp = useCallback(() => {
-    isRetouchingRef.current = false;
-  }, []);
-
-  // Text click placement
-  const handleCanvasClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (editor.eyedropperActive) {
-      handleEyedropper(e.clientX, e.clientY);
-      return;
-    }
-    if (editor.textTool) {
-      const { x, y } = canvasToPixel(e.clientX, e.clientY);
-      const id = Math.random().toString(36).slice(2, 10);
-      editor.setAnnotations(prev => [...prev, {
-        id, text: 'Your text here',
-        x, y,
-        fontSize: editor.fontSize,
-        fontFamily: editor.fontFamily,
-        color: editor.textColor,
-        bold: editor.bold,
-        italic: editor.italic,
-        align: editor.textAlign,
-        opacity: editor.textOpacity,
-      }]);
-      editor.setSelectedId(id);
-      editor.setTextInput('Your text here');
-    }
-  }, [editor, canvasToPixel, handleEyedropper]);
-
-  // Undo retouch
-  const handleUndo = useCallback(() => {
-    const off = offCanvasRef.current;
-    if (!off || undoStackRef.current.length === 0) return;
-    const offCtx = off.getContext('2d')!;
-    const prev = undoStackRef.current.pop()!;
-    offCtx.putImageData(prev, 0, 0);
+    if (!undoStackRef.current.length || !off) return;
+    const snap = undoStackRef.current.pop()!;
+    off.getContext('2d')!.putImageData(snap, 0, 0);
+    (editor as any)._undoCount = undoStackRef.current.length;
     drawFromOff();
   }, [drawFromOff]);
 
-  // Expose undo and canvas for sidebar + download
-  (editor as any)._handleUndo = handleUndo;
-  (editor as any)._undoCount = undoStackRef.current.length;
-  (editor as any)._canvasRef = canvasRef;
-  (editor as any)._drawFromOff = drawFromOff;
+  // ── Canvas click (eyedropper / text placement) ───────────────────────────
+  const handleCanvasClick = useCallback((e: React.MouseEvent) => {
+    if (editor.eyedropperActive) {
+      const off = offCanvasRef.current;
+      const canvas = canvasRef.current;
+      if (!off || !canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const cx = (e.clientX - rect.left) * (canvas.width  / rect.width);
+      const cy = (e.clientY - rect.top)  * (canvas.height / rect.height);
+      const offCtx = off.getContext('2d')!;
+      const px = offCtx.getImageData(
+        Math.round(cx * (off.width  / canvas.width)),
+        Math.round(cy * (off.height / canvas.height)),
+        1, 1
+      ).data;
+      const hex = '#' + [px[0], px[1], px[2]].map(v => v.toString(16).padStart(2, '0')).join('');
+      editor.setFillColor(hex);
+      editor.setEyedropperActive(false);
+      return;
+    }
+    if (!editor.textTool) {
+      editor.setSelectedId(null);
+      return;
+    }
+    const { x, y } = canvasToPixel(e.clientX, e.clientY);
+    const id = Math.random().toString(36).slice(2, 10);
+    editor.setAnnotations(prev => [...prev, {
+      id, text: editor.textInput || 'Your text here',
+      x, y,
+      fontSize: editor.fontSize, fontFamily: editor.fontFamily,
+      color: editor.textColor, bold: editor.bold, italic: editor.italic,
+      align: editor.textAlign, opacity: editor.textOpacity,
+    }]);
+    editor.setSelectedId(id);
+    editor.setTextTool(false);
+  }, [editor, canvasToPixel]);
+
+  // ── Display position for text overlays ───────────────────────────────────
+  const getDisplayPos = useCallback((ann: { x: number; y: number }) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { left: 0, top: 0 };
+    const rect = canvas.getBoundingClientRect();
+    return {
+      left: ann.x * (rect.width  / canvas.width),
+      top:  ann.y * (rect.height / canvas.height),
+    };
+  }, []);
+
+  // ── Text annotation drag (window-level, exactly like Lumina) ────────────
+  const handleAnnotationMouseDown = useCallback((e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    editor.setSelectedId(id);
+    const ann = editor.annotations.find(a => a.id === id);
+    if (!ann) return;
+    editor.startDrag({ id, startX: e.clientX, startY: e.clientY, origX: ann.x, origY: ann.y });
+  }, [editor]);
+
+  useEffect(() => {
+    if (!editor.dragging) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect   = canvas.getBoundingClientRect();
+    const scaleX = canvas.width  / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const onMove = (e: MouseEvent) => {
+      editor.setAnnotations(prev => prev.map(a =>
+        a.id === editor.dragging!.id
+          ? { ...a,
+              x: editor.dragging!.origX + (e.clientX - editor.dragging!.startX) * scaleX,
+              y: editor.dragging!.origY + (e.clientY - editor.dragging!.startY) * scaleY }
+          : a
+      ));
+    };
+    const onUp = () => editor.startDrag(null);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+  }, [editor.dragging]);
 
   const cursorStyle =
     editor.eyedropperActive ? 'crosshair' :
-    editor.retouchActive ? 'cell' :
-    editor.textTool ? 'crosshair' : 'default';
+    editor.retouchActive    ? 'cell'       :
+    editor.textTool         ? 'crosshair'  : 'default';
 
   if (!editor.image) return null;
 
   return (
-    <main ref={containerRef} className="flex-1 bg-black/40 overflow-auto relative flex items-center justify-center p-8">
-      <div
-        id="export-container"
-        ref={canvasWrapRef}
-        className="relative shadow-2xl ring-1 ring-white/10"
-        style={{
-          background:
-            editor.background.type === 'gradient' ? editor.background.gradient :
-            editor.background.type === 'solid' ? editor.background.color : 'transparent',
-          padding: `${editor.background.padding}px`,
-          borderRadius: editor.background.padding > 0 ? '16px' : '0',
-        }}
-      >
-        <div className={`relative overflow-hidden ${editor.background.browserChrome ? 'rounded-xl shadow-xl border border-white/10' : ''} ${editor.background.roundedCorners && !editor.background.browserChrome ? 'rounded-xl' : ''}`}>
-          {editor.background.browserChrome && (
-            <div className="h-10 bg-[#1e1e1e] border-b border-white/10 flex items-center px-4 gap-2">
-              <div className="w-3 h-3 rounded-full bg-red-500/80" />
-              <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-              <div className="w-3 h-3 rounded-full bg-green-500/80" />
-            </div>
-          )}
-          <canvas
-            ref={canvasRef}
-            className="max-w-full max-h-full object-contain block"
-            style={{ maxHeight: '70vh', cursor: cursorStyle }}
-            onClick={handleCanvasClick}
-            onMouseDown={handleRetouchMouseDown}
-            onMouseMove={handleRetouchMouseMove}
-            onMouseUp={handleRetouchMouseUp}
-            onMouseLeave={handleRetouchMouseUp}
-          />
+    <main ref={containerRef}
+      className="flex-1 bg-black/40 overflow-auto relative flex items-center justify-center p-8">
 
-          {/* Text overlays */}
-          {editor.annotations.map(ann => {
-            const canvas = canvasRef.current;
-            if (!canvas) return null;
-            const rect = canvas.getBoundingClientRect();
-            const displayScale = rect.width / canvas.width;
-            const isSelected = ann.id === editor.selectedId;
-            return (
-              <div
-                key={ann.id}
-                style={{
-                  position: 'absolute',
-                  left: ann.x * displayScale,
-                  top: ann.y * displayScale,
-                  fontSize: `${ann.fontSize * displayScale}px`,
-                  fontFamily: ann.fontFamily,
-                  fontWeight: ann.bold ? 'bold' : 'normal',
-                  fontStyle: ann.italic ? 'italic' : 'normal',
-                  color: ann.color,
-                  opacity: ann.opacity / 100,
-                  textAlign: ann.align,
-                  whiteSpace: 'pre',
-                  userSelect: 'none',
-                  cursor: 'move',
-                  outline: isSelected ? '2px dashed rgba(29,179,153,0.8)' : 'none',
-                  outlineOffset: '4px',
-                  padding: '2px 4px',
-                  lineHeight: 1.2,
-                }}
-                onClick={e => { e.stopPropagation(); editor.setSelectedId(ann.id); }}
-              >
-                {ann.text}
-              </div>
-            );
-          })}
-        </div>
+      {/* Canvas wrapper — same structure as Lumina */}
+      <div ref={canvasWrapRef} className="relative shadow-2xl ring-1 ring-white/10"
+        style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+
+        <canvas
+          ref={canvasRef}
+          className="max-w-full max-h-full object-contain block"
+          style={{
+            backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0h10v10H0zm10 10h10v10H10z\' fill=\'%231a1d24\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")',
+            cursor: cursorStyle,
+            maxHeight: '75vh',
+          }}
+          onClick={handleCanvasClick}
+          onMouseDown={handleRetouchMouseDown}
+          onMouseMove={handleRetouchMouseMove}
+          onMouseUp={handleRetouchMouseUp}
+          onMouseLeave={handleRetouchMouseUp}
+        />
+
+        {/* Text overlays — exactly like Lumina */}
+        {editor.annotations.map(ann => {
+          const pos = getDisplayPos(ann);
+          const isSelected = ann.id === editor.selectedId;
+          const displayScale = canvasRef.current
+            ? canvasRef.current.getBoundingClientRect().width / canvasRef.current.width
+            : 1;
+          return (
+            <div key={ann.id}
+              style={{
+                position: 'absolute',
+                left: pos.left,
+                top:  pos.top,
+                fontSize:   `${ann.fontSize * displayScale}px`,
+                fontFamily: ann.fontFamily,
+                fontWeight: ann.bold   ? 'bold'   : 'normal',
+                fontStyle:  ann.italic ? 'italic' : 'normal',
+                color:       ann.color,
+                opacity:     ann.opacity / 100,
+                textAlign:   ann.align,
+                whiteSpace:  'pre',
+                userSelect:  'none',
+                cursor:      'move',
+                outline:     isSelected ? '2px dashed rgba(29,179,153,0.8)' : 'none',
+                outlineOffset: '4px',
+                padding:     '2px 4px',
+                pointerEvents: editor.retouchActive ? 'none' : 'auto',
+                lineHeight:  1.2,
+              }}
+              onMouseDown={e => handleAnnotationMouseDown(e, ann.id)}>
+              {ann.text}
+            </div>
+          );
+        })}
       </div>
 
-      {/* Hint toasts */}
+      {/* Hint toasts — same as Lumina */}
       <AnimatePresence>
         {editor.textTool && (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}

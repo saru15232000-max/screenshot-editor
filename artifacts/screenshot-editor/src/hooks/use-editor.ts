@@ -1,14 +1,5 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { TextAnnotation, Adjustments, DEFAULT_ADJUSTMENTS, BackgroundOptions, Transform, DEFAULT_TRANSFORM } from '../types/editor';
-
-const INITIAL_BACKGROUND: BackgroundOptions = {
-  type: 'gradient',
-  color: '#ffffff',
-  gradient: 'linear-gradient(to right, #4facfe, #00f2fe)',
-  padding: 64,
-  browserChrome: true,
-  roundedCorners: true,
-};
+import { useState, useCallback, useEffect } from 'react';
+import { TextAnnotation, Adjustments, DEFAULT_ADJUSTMENTS, Transform, DEFAULT_TRANSFORM } from '../types/editor';
 
 function genId() { return Math.random().toString(36).slice(2, 10); }
 
@@ -27,7 +18,7 @@ export function useEditor() {
   const [resizeHeight, setResizeHeight] = useState('');
   const [aspectLock, setAspectLock] = useState(true);
 
-  // Retouch (Retouch tab)
+  // Retouch
   const [retouchActive, setRetouchActive] = useState(false);
   const [eyedropperActive, setEyedropperActive] = useState(false);
   const [fillColor, setFillColor] = useState<string | null>(null);
@@ -37,6 +28,10 @@ export function useEditor() {
   const [annotations, setAnnotations] = useState<TextAnnotation[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [textTool, setTextTool] = useState(false);
+  const [dragging, setDragging] = useState<{
+    id: string; startX: number; startY: number; origX: number; origY: number;
+  } | null>(null);
+
   const [textInput, setTextInput] = useState('Your text here');
   const [fontSize, setFontSize] = useState(48);
   const [fontFamily, setFontFamily] = useState('Inter, sans-serif');
@@ -46,30 +41,26 @@ export function useEditor() {
   const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('left');
   const [textOpacity, setTextOpacity] = useState(100);
 
-  // Background / Frame
-  const [background, setBackground] = useState<BackgroundOptions>(INITIAL_BACKGROUND);
-
   // Download format
   const [downloadFormat, setDownloadFormat] = useState('image/png');
 
   // Sync textInput when selected annotation changes
   useEffect(() => {
-    if (selectedId) {
-      const ann = annotations.find(a => a.id === selectedId);
-      if (ann) {
-        setTextInput(ann.text);
-        setFontSize(ann.fontSize);
-        setFontFamily(ann.fontFamily);
-        setTextColor(ann.color);
-        setBold(ann.bold);
-        setItalic(ann.italic);
-        setTextAlign(ann.align);
-        setTextOpacity(ann.opacity);
-      }
+    if (!selectedId) return;
+    const ann = annotations.find(a => a.id === selectedId);
+    if (ann) {
+      setTextInput(ann.text);
+      setFontSize(ann.fontSize);
+      setFontFamily(ann.fontFamily);
+      setTextColor(ann.color);
+      setBold(ann.bold);
+      setItalic(ann.italic);
+      setTextAlign(ann.align);
+      setTextOpacity(ann.opacity);
     }
   }, [selectedId]);
 
-  // Sync selected annotation from text panel controls
+  // Live-sync form controls → selected annotation
   useEffect(() => {
     if (!selectedId) return;
     setAnnotations(prev => prev.map(a =>
@@ -82,7 +73,7 @@ export function useEditor() {
   const addNewTextLayer = useCallback((canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
     const canvas = canvasRef.current;
     const id = genId();
-    const cx = canvas ? canvas.width / 2 : 200;
+    const cx = canvas ? canvas.width  / 2 : 200;
     const cy = canvas ? canvas.height / 2 : 200;
     const newAnn: TextAnnotation = {
       id, text: 'Your text here',
@@ -100,9 +91,13 @@ export function useEditor() {
     if (selectedId === id) setSelectedId(null);
   }, [selectedId]);
 
+  const startDrag = useCallback((d: typeof dragging) => {
+    setDragging(d);
+  }, []);
+
   const handleImageUpload = useCallback((file: File) => {
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = e => {
       const img = new Image();
       img.onload = () => {
         setImage(img);
@@ -129,7 +124,6 @@ export function useEditor() {
     setSelectedId(null);
     setAdjustments(DEFAULT_ADJUSTMENTS);
     setTransform(DEFAULT_TRANSFORM);
-    setBackground(INITIAL_BACKGROUND);
     setRetouchActive(false);
     setEyedropperActive(false);
     setFillColor(null);
@@ -185,6 +179,7 @@ export function useEditor() {
     annotations, setAnnotations,
     selectedId, setSelectedId,
     textTool, setTextTool,
+    dragging, startDrag,
     textInput, setTextInput,
     fontSize, setFontSize,
     fontFamily, setFontFamily,
@@ -193,7 +188,6 @@ export function useEditor() {
     italic, setItalic,
     textAlign, setTextAlign,
     textOpacity, setTextOpacity,
-    background, setBackground,
     downloadFormat, setDownloadFormat,
     addNewTextLayer, deleteAnnotation,
     handleImageUpload, reset,
