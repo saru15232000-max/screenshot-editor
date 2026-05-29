@@ -24,7 +24,7 @@ export function useEditor() {
   const [fillColor, setFillColor] = useState<string | null>(null);
   const [brushSize, setBrushSize] = useState(40);
 
-  // Text annotations (Text tab)
+  // Text annotations
   const [annotations, setAnnotations] = useState<TextAnnotation[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [textTool, setTextTool] = useState(false);
@@ -41,10 +41,15 @@ export function useEditor() {
   const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('left');
   const [textOpacity, setTextOpacity] = useState(100);
 
+  // Text color eyedropper + font analyzer (Lumina features)
+  const [textColorEyedropper, setTextColorEyedropper] = useState(false);
+  const [fontAnalyzerActive, setFontAnalyzerActive] = useState(false);
+  const [fontSuggestions, setFontSuggestions] = useState<Array<{ value: string; label: string; confidence: number }>>([]);
+
   // Download format
   const [downloadFormat, setDownloadFormat] = useState('image/png');
 
-  // Sync textInput when selected annotation changes
+  // Sync form ↔ selected annotation
   useEffect(() => {
     if (!selectedId) return;
     const ann = annotations.find(a => a.id === selectedId);
@@ -91,9 +96,7 @@ export function useEditor() {
     if (selectedId === id) setSelectedId(null);
   }, [selectedId]);
 
-  const startDrag = useCallback((d: typeof dragging) => {
-    setDragging(d);
-  }, []);
+  const startDrag = useCallback((d: typeof dragging) => { setDragging(d); }, []);
 
   const handleImageUpload = useCallback((file: File) => {
     const reader = new FileReader();
@@ -112,6 +115,9 @@ export function useEditor() {
         setFillColor(null);
         setTransform(DEFAULT_TRANSFORM);
         setAdjustments(DEFAULT_ADJUSTMENTS);
+        setFontSuggestions([]);
+        setFontAnalyzerActive(false);
+        setTextColorEyedropper(false);
       };
       img.src = e.target?.result as string;
     };
@@ -127,6 +133,9 @@ export function useEditor() {
     setRetouchActive(false);
     setEyedropperActive(false);
     setFillColor(null);
+    setFontSuggestions([]);
+    setFontAnalyzerActive(false);
+    setTextColorEyedropper(false);
   }, []);
 
   const updateResize = useCallback((w: string, h: string, fromWidth: boolean) => {
@@ -188,6 +197,9 @@ export function useEditor() {
     italic, setItalic,
     textAlign, setTextAlign,
     textOpacity, setTextOpacity,
+    textColorEyedropper, setTextColorEyedropper,
+    fontAnalyzerActive, setFontAnalyzerActive,
+    fontSuggestions, setFontSuggestions,
     downloadFormat, setDownloadFormat,
     addNewTextLayer, deleteAnnotation,
     handleImageUpload, reset,

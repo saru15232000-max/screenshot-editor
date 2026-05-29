@@ -4,7 +4,6 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   AlignLeft, AlignCenter, AlignRight, Bold, Italic,
@@ -13,46 +12,73 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-// ── Filter presets (matches Lumina's preset list exactly) ────────────────────
-const PRESETS = [
-  { name: 'None',      filter: { brightness:100, contrast:100, saturation:100, blur:0, sepia:0, hueRotate:0, grayscale:0, invert:0 } },
-  { name: 'Vivid',     filter: { brightness:110, contrast:120, saturation:140, blur:0, sepia:0, hueRotate:0,  grayscale:0, invert:0 } },
-  { name: 'Matte',     filter: { brightness:110, contrast:90,  saturation:80,  blur:0, sepia:0, hueRotate:0,  grayscale:0, invert:0 } },
-  { name: 'Cool',      filter: { brightness:100, contrast:100, saturation:90,  blur:0, sepia:0, hueRotate:30, grayscale:0, invert:0 } },
-  { name: 'Warm',      filter: { brightness:105, contrast:100, saturation:120, blur:0, sepia:0, hueRotate:-20,grayscale:0, invert:0 } },
-  { name: 'Mono',      filter: { brightness:100, contrast:100, saturation:100, blur:0, sepia:0, hueRotate:0,  grayscale:100, invert:0 } },
-  { name: 'Fade',      filter: { brightness:115, contrast:80,  saturation:70,  blur:0, sepia:0, hueRotate:0,  grayscale:0, invert:0 } },
-  { name: 'Dramatic',  filter: { brightness:90,  contrast:140, saturation:120, blur:0, sepia:0, hueRotate:0,  grayscale:0, invert:0 } },
-  { name: 'Sepia',     filter: { brightness:100, contrast:100, saturation:100, blur:0, sepia:80, hueRotate:0, grayscale:0, invert:0 } },
-  { name: 'Invert',    filter: { brightness:100, contrast:100, saturation:100, blur:0, sepia:0, hueRotate:0,  grayscale:0, invert:100 } },
-];
-
-// ── Text style templates ──────────────────────────────────────────────────────
-const TEXT_TEMPLATES = [
-  { name: 'Big Title',    fontFamily: 'Montserrat, sans-serif', fontSize: 72,  color: '#ffffff', bold: true,  italic: false, opacity: 100 },
-  { name: 'Subtitle',     fontFamily: 'Inter, sans-serif',      fontSize: 36,  color: '#e2e8f0', bold: false, italic: false, opacity: 90  },
-  { name: 'Caption',      fontFamily: 'Lato, sans-serif',       fontSize: 20,  color: '#94a3b8', bold: false, italic: false, opacity: 80  },
-  { name: 'Quote',        fontFamily: 'Playfair Display, serif',fontSize: 40,  color: '#fbbf24', bold: false, italic: true,  opacity: 95  },
-  { name: 'Code Label',   fontFamily: 'Roboto Mono, monospace', fontSize: 18,  color: '#34d399', bold: false, italic: false, opacity: 100 },
-  { name: 'Brand',        fontFamily: 'Pacifico, cursive',      fontSize: 52,  color: '#a78bfa', bold: false, italic: false, opacity: 100 },
-];
-
+// ── Font families (grouped, same as Lumina) ───────────────────────────────────
 const FONT_FAMILIES = [
-  { label: 'Inter',        value: 'Inter, sans-serif' },
-  { label: 'Playfair',     value: 'Playfair Display, serif' },
-  { label: 'Roboto Mono',  value: 'Roboto Mono, monospace' },
-  { label: 'Dancing',      value: 'Dancing Script, cursive' },
-  { label: 'Oswald',       value: 'Oswald, sans-serif' },
-  { label: 'Lato',         value: 'Lato, sans-serif' },
-  { label: 'Merriweather', value: 'Merriweather, serif' },
-  { label: 'Montserrat',   value: 'Montserrat, sans-serif' },
-  { label: 'Raleway',      value: 'Raleway, sans-serif' },
-  { label: 'Pacifico',     value: 'Pacifico, cursive' },
+  { label: 'Inter',            value: 'Inter, sans-serif',            group: 'Sans-serif' },
+  { label: 'Roboto',           value: 'Roboto, sans-serif',           group: 'Sans-serif' },
+  { label: 'Open Sans',        value: '"Open Sans", sans-serif',      group: 'Sans-serif' },
+  { label: 'Lato',             value: 'Lato, sans-serif',             group: 'Sans-serif' },
+  { label: 'Montserrat',       value: 'Montserrat, sans-serif',       group: 'Sans-serif' },
+  { label: 'Poppins',          value: 'Poppins, sans-serif',          group: 'Sans-serif' },
+  { label: 'Nunito',           value: 'Nunito, sans-serif',           group: 'Sans-serif' },
+  { label: 'Raleway',          value: 'Raleway, sans-serif',          group: 'Sans-serif' },
+  { label: 'Oswald',           value: 'Oswald, sans-serif',           group: 'Sans-serif' },
+  { label: 'Georgia',          value: 'Georgia, serif',               group: 'Serif' },
+  { label: 'Playfair Display', value: '"Playfair Display", serif',    group: 'Serif' },
+  { label: 'Merriweather',     value: 'Merriweather, serif',          group: 'Serif' },
+  { label: 'Lora',             value: 'Lora, serif',                  group: 'Serif' },
+  { label: 'Impact',           value: 'Impact, sans-serif',           group: 'Display' },
+  { label: 'Bebas Neue',       value: '"Bebas Neue", sans-serif',     group: 'Display' },
+  { label: 'Courier New',      value: '"Courier New", monospace',     group: 'Monospace' },
+  { label: 'Roboto Mono',      value: '"Roboto Mono", monospace',     group: 'Monospace' },
+  { label: 'Space Mono',       value: '"Space Mono", monospace',      group: 'Monospace' },
+  { label: 'Pacifico',         value: 'Pacifico, cursive',            group: 'Script' },
+  { label: 'Dancing Script',   value: '"Dancing Script", cursive',    group: 'Script' },
+  { label: 'Lobster',          value: 'Lobster, cursive',             group: 'Script' },
 ];
 
-const PRESET_COLORS = ['#ffffff','#000000','#f87171','#fbbf24','#34d399','#60a5fa','#a78bfa','#f472b6'];
+// ── Text style templates (18 — identical to Lumina) ───────────────────────────
+const TEXT_TEMPLATES = [
+  { name: 'Bold Headline',  fontFamily: 'Impact, sans-serif',            fontSize: 80, color: '#ffffff', bold: true,  italic: false, opacity: 100 },
+  { name: 'Movie Title',    fontFamily: '"Bebas Neue", sans-serif',      fontSize: 96, color: '#ffffff', bold: false, italic: false, opacity: 100 },
+  { name: 'Watermark',      fontFamily: 'Inter, sans-serif',             fontSize: 40, color: '#ffffff', bold: false, italic: true,  opacity: 30  },
+  { name: 'Caption',        fontFamily: 'Inter, sans-serif',             fontSize: 26, color: '#ffffff', bold: false, italic: false, opacity: 95  },
+  { name: 'Subtitle',       fontFamily: '"Playfair Display", serif',     fontSize: 38, color: '#e2e8f0', bold: false, italic: true,  opacity: 100 },
+  { name: 'Elegant Script', fontFamily: '"Dancing Script", cursive',     fontSize: 64, color: '#f8fafc', bold: false, italic: false, opacity: 100 },
+  { name: 'Quote',          fontFamily: '"Playfair Display", serif',     fontSize: 32, color: '#e2e8f0', bold: false, italic: true,  opacity: 80  },
+  { name: 'Stamp',          fontFamily: 'Impact, sans-serif',            fontSize: 60, color: '#ef4444', bold: true,  italic: false, opacity: 90  },
+  { name: 'Neon Green',     fontFamily: 'Impact, sans-serif',            fontSize: 64, color: '#4ade80', bold: true,  italic: false, opacity: 100 },
+  { name: 'Neon Pink',      fontFamily: 'Oswald, sans-serif',            fontSize: 64, color: '#f472b6', bold: true,  italic: false, opacity: 100 },
+  { name: 'Gold Serif',     fontFamily: '"Playfair Display", serif',     fontSize: 52, color: '#facc15', bold: true,  italic: true,  opacity: 100 },
+  { name: 'Retro',          fontFamily: 'Oswald, sans-serif',            fontSize: 56, color: '#fb923c', bold: true,  italic: false, opacity: 100 },
+  { name: 'Dark Label',     fontFamily: 'Montserrat, sans-serif',        fontSize: 30, color: '#000000', bold: true,  italic: false, opacity: 90  },
+  { name: 'Social Handle',  fontFamily: 'Poppins, sans-serif',           fontSize: 28, color: '#ffffff', bold: true,  italic: false, opacity: 90  },
+  { name: 'Code Tag',       fontFamily: '"Space Mono", monospace',       fontSize: 24, color: '#4ade80', bold: false, italic: false, opacity: 95  },
+  { name: 'Minimalist',     fontFamily: 'Raleway, sans-serif',           fontSize: 36, color: '#ffffff', bold: false, italic: false, opacity: 85  },
+  { name: 'Warning',        fontFamily: 'Impact, sans-serif',            fontSize: 56, color: '#fbbf24', bold: true,  italic: false, opacity: 100 },
+  { name: 'Lobster Style',  fontFamily: 'Lobster, cursive',              fontSize: 58, color: '#f87171', bold: false, italic: false, opacity: 100 },
+];
 
+// ── Filter presets (same as Lumina) ───────────────────────────────────────────
 const DEFAULT_ADJ = { brightness:100, contrast:100, saturation:100, blur:0, sepia:0, hueRotate:0, grayscale:0, invert:0 };
+const PRESETS = [
+  { name: 'Original', filter: DEFAULT_ADJ },
+  { name: 'Vivid',    filter: { ...DEFAULT_ADJ, contrast: 110, saturation: 130 } },
+  { name: 'Fade',     filter: { ...DEFAULT_ADJ, contrast: 90,  brightness: 110 } },
+  { name: 'Chrome',   filter: { ...DEFAULT_ADJ, contrast: 120, saturation: 110 } },
+  { name: 'Matte',    filter: { ...DEFAULT_ADJ, contrast: 85,  brightness: 105, sepia: 10 } },
+  { name: 'Noir',     filter: { ...DEFAULT_ADJ, grayscale: 100, contrast: 120 } },
+  { name: 'Vintage',  filter: { ...DEFAULT_ADJ, sepia: 50,  contrast: 90 } },
+  { name: 'Cool',     filter: { ...DEFAULT_ADJ, hueRotate: -15, saturation: 110 } },
+  { name: 'Warm',     filter: { ...DEFAULT_ADJ, sepia: 20, hueRotate: 10, saturation: 110 } },
+  { name: 'Dramatic', filter: { ...DEFAULT_ADJ, contrast: 140, brightness: 90, saturation: 120 } },
+];
+
+// ── Preset colors (same as Lumina) ────────────────────────────────────────────
+const PRESET_COLORS = [
+  '#ffffff','#000000','#f87171','#fb923c','#facc15',
+  '#4ade80','#60a5fa','#a78bfa','#f472b6','#e2e8f0',
+];
 
 export function Sidebar({ editor }: { editor: EditorContextType }) {
   const tabCls = 'flex-1 rounded-none h-full text-[11px] data-[state=active]:bg-background data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none';
@@ -65,7 +91,7 @@ export function Sidebar({ editor }: { editor: EditorContextType }) {
     <aside className="w-80 border-l border-border bg-card flex flex-col shrink-0 z-10 shadow-2xl">
       <Tabs defaultValue="adjust" className="flex-1 flex flex-col">
 
-        {/* Tab bar — 5 tabs, identical to Lumina */}
+        {/* ── Tab bar — 5 tabs, identical to Lumina ── */}
         <TabsList className="w-full h-12 p-0 bg-transparent border-b border-border rounded-none shrink-0 flex">
           {[
             { value: 'adjust',  label: 'Adjust'  },
@@ -80,7 +106,7 @@ export function Sidebar({ editor }: { editor: EditorContextType }) {
 
         <div className="flex-1 overflow-y-auto p-5">
 
-          {/* ── ADJUST ── */}
+          {/* ────────────── ADJUST ────────────── */}
           <TabsContent value="adjust" className="space-y-6 mt-0">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Basic</h3>
@@ -108,8 +134,8 @@ export function Sidebar({ editor }: { editor: EditorContextType }) {
             <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">Details</h3>
             <div className="space-y-4">
               {([
-                { label: 'Temperature', key: 'sepia',     min: 0, max: 100, unit: '%' },
-                { label: 'Hue',         key: 'hueRotate', min: 0, max: 360, unit: '°' },
+                { label: 'Temperature', key: 'sepia',     min: 0, max: 100, unit: '%',  step: 1   },
+                { label: 'Hue',         key: 'hueRotate', min: 0, max: 360, unit: '°',  step: 1   },
                 { label: 'Blur',        key: 'blur',      min: 0, max: 20,  unit: 'px', step: 0.5 },
               ] as const).map(({ label, key, min, max, unit, step }) => (
                 <div key={key} className="space-y-3">
@@ -117,14 +143,14 @@ export function Sidebar({ editor }: { editor: EditorContextType }) {
                     <span>{label}</span>
                     <span className="text-muted-foreground">{editor.adjustments[key]}{unit}</span>
                   </div>
-                  <Slider value={[editor.adjustments[key]]} min={min} max={max} step={step ?? 1}
+                  <Slider value={[editor.adjustments[key]]} min={min} max={max} step={step}
                     onValueChange={([v]) => editor.setAdjustments(a => ({ ...a, [key]: v }))} />
                 </div>
               ))}
             </div>
           </TabsContent>
 
-          {/* ── FILTERS ── */}
+          {/* ────────────── FILTERS ────────────── */}
           <TabsContent value="filters" className="mt-0">
             <div className="grid grid-cols-2 gap-3">
               {PRESETS.map(preset => (
@@ -138,8 +164,9 @@ export function Sidebar({ editor }: { editor: EditorContextType }) {
             </div>
           </TabsContent>
 
-          {/* ── TEXT ── */}
+          {/* ────────────── TEXT ────────────── */}
           <TabsContent value="text" className="mt-0 space-y-5">
+
             {/* Style Templates */}
             <div className="space-y-2">
               <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Style Templates</h3>
@@ -195,44 +222,101 @@ export function Sidebar({ editor }: { editor: EditorContextType }) {
               </div>
             </div>
 
+            {/* Edit Selected */}
             {editor.selectedId && (
               <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
                 className="space-y-4 pt-2 border-t border-border">
                 <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider pt-1">Edit Selected</h3>
+
+                {/* Content */}
                 <div className="space-y-1.5">
                   <label className="text-xs text-muted-foreground">Content</label>
                   <textarea value={editor.textInput} onChange={e => editor.setTextInput(e.target.value)} rows={3}
                     className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-primary"
                     placeholder="Enter your text..." />
                 </div>
+
+                {/* Font with Analyzer button */}
                 <div className="space-y-1.5">
-                  <label className="text-xs text-muted-foreground">Font</label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs text-muted-foreground">Font</label>
+                    <Button
+                      variant={editor.fontAnalyzerActive ? 'default' : 'ghost'}
+                      size="sm" className="h-6 px-2 text-xs gap-1"
+                      onClick={() => { editor.setFontAnalyzerActive(v => !v); editor.setFontSuggestions([]); }}>
+                      <ScanSearch className="w-3 h-3" />
+                      {editor.fontAnalyzerActive ? 'Click on text…' : 'Analyze from image'}
+                    </Button>
+                  </div>
+
+                  {/* Font analyzer results */}
+                  {editor.fontSuggestions.length > 0 && (
+                    <div className="space-y-1.5 p-2 bg-background rounded-md border border-border">
+                      <p className="text-xs text-muted-foreground font-medium">Best matches:</p>
+                      {editor.fontSuggestions.map((s, i) => (
+                        <button key={s.value} onClick={() => editor.setFontFamily(s.value)}
+                          className={`w-full flex items-center justify-between px-2 py-1.5 rounded text-left text-sm transition-colors hover:bg-primary/10 ${editor.fontFamily === s.value ? 'bg-primary/15 text-primary' : ''}`}
+                          style={{ fontFamily: s.value }}>
+                          <span>{s.label}</span>
+                          <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                            <div className="h-1.5 rounded-full bg-primary/30 overflow-hidden" style={{ width: 40 }}>
+                              <div className="h-full bg-primary rounded-full" style={{ width: `${s.confidence}%` }} />
+                            </div>
+                            <span className="text-xs text-muted-foreground w-8 text-right">{s.confidence}%</span>
+                            {i === 0 && <span className="text-xs text-primary font-medium">Best</span>}
+                          </div>
+                        </button>
+                      ))}
+                      <button onClick={() => editor.setFontSuggestions([])}
+                        className="text-xs text-muted-foreground hover:text-foreground w-full text-right pt-0.5">
+                        Dismiss
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Font selector grouped by category */}
                   <Select value={editor.fontFamily} onValueChange={editor.setFontFamily}>
-                    <SelectTrigger className="h-9 bg-background"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {FONT_FAMILIES.map(f => (
-                        <SelectItem key={f.value} value={f.value} style={{ fontFamily: f.value }}>{f.label}</SelectItem>
+                    <SelectTrigger className="h-9 bg-background text-sm">
+                      <SelectValue>
+                        <span style={{ fontFamily: editor.fontFamily }}>
+                          {FONT_FAMILIES.find(f => f.value === editor.fontFamily)?.label ?? editor.fontFamily}
+                        </span>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent className="max-h-72">
+                      {['Sans-serif', 'Serif', 'Display', 'Monospace', 'Script'].map(group => (
+                        <React.Fragment key={group}>
+                          <div className="px-2 py-1 text-xs text-muted-foreground font-semibold uppercase tracking-wider border-b border-border mt-1">
+                            {group}
+                          </div>
+                          {FONT_FAMILIES.filter(f => f.group === group).map(f => (
+                            <SelectItem key={f.value} value={f.value}>
+                              <span style={{ fontFamily: f.value }}>{f.label}</span>
+                            </SelectItem>
+                          ))}
+                        </React.Fragment>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span>Size</span>
-                    <span className="text-muted-foreground">{editor.fontSize}px</span>
-                  </div>
-                  <Slider value={[editor.fontSize]} min={8} max={200} step={1}
+
+                {/* Size */}
+                <div className="space-y-2">
+                  <div className="flex justify-between"><span className="text-xs text-muted-foreground">Size</span><span className="text-xs text-muted-foreground">{editor.fontSize}px</span></div>
+                  <Slider value={[editor.fontSize]} min={10} max={300} step={1}
                     onValueChange={([v]) => editor.setFontSize(v)} />
                 </div>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-xs text-muted-foreground">Opacity</span>
-                    <span className="text-xs text-muted-foreground">{editor.textOpacity}%</span>
-                  </div>
+
+                {/* Opacity */}
+                <div className="space-y-2">
+                  <div className="flex justify-between"><span className="text-xs text-muted-foreground">Opacity</span><span className="text-xs text-muted-foreground">{editor.textOpacity}%</span></div>
                   <Slider value={[editor.textOpacity]} min={10} max={100} step={1}
                     onValueChange={([v]) => editor.setTextOpacity(v)} />
                 </div>
-                <div className="space-y-2">
+
+                {/* Style buttons */}
+                <div className="space-y-1.5">
+                  <label className="text-xs text-muted-foreground">Style</label>
                   <div className="flex gap-2">
                     {[
                       { icon: <Bold className="w-4 h-4" />,        active: editor.bold,              toggle: () => editor.setBold(!editor.bold) },
@@ -247,34 +331,51 @@ export function Sidebar({ editor }: { editor: EditorContextType }) {
                     ))}
                   </div>
                 </div>
+
+                {/* Color with eyedropper */}
                 <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground">Color</label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs text-muted-foreground">Color</label>
+                    <Button
+                      variant={editor.textColorEyedropper ? 'default' : 'ghost'}
+                      size="sm" className="h-6 px-2 text-xs gap-1"
+                      onClick={() => editor.setTextColorEyedropper(v => !v)}>
+                      <Pipette className="w-3 h-3" />
+                      {editor.textColorEyedropper ? 'Click image…' : 'Pick from image'}
+                    </Button>
+                  </div>
+                  {/* Color swatch + hex */}
                   <div className="flex items-center gap-2 mb-1">
                     <div className="w-7 h-7 rounded-full border-2 shrink-0"
                       style={{ backgroundColor: editor.textColor, borderColor: 'hsl(var(--border))' }} />
                     <span className="text-xs font-mono text-muted-foreground">{editor.textColor}</span>
                   </div>
+                  {/* Preset color swatches */}
                   <div className="flex flex-wrap gap-2">
                     {PRESET_COLORS.map(c => (
                       <button key={c} onClick={() => editor.setTextColor(c)}
                         className="w-7 h-7 rounded-full border-2 transition-transform hover:scale-110"
-                        style={{ backgroundColor: c, borderColor: editor.textColor === c ? 'hsl(var(--primary))' : 'hsl(var(--border))' }} />
+                        style={{ backgroundColor: c, borderColor: editor.textColor === c ? 'hsl(var(--primary))' : 'hsl(var(--border))', boxShadow: editor.textColor === c ? '0 0 0 2px hsl(var(--primary)/0.3)' : 'none' }} />
                     ))}
-                    <label className="w-7 h-7 rounded-full border-2 border-border overflow-hidden cursor-pointer hover:scale-110 transition-transform relative">
+                    {/* Custom color picker */}
+                    <label className="w-7 h-7 rounded-full border-2 border-border overflow-hidden cursor-pointer hover:scale-110 transition-transform relative" title="Custom color">
                       <input type="color" value={editor.textColor} onChange={e => editor.setTextColor(e.target.value)}
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                       <div className="w-full h-full" style={{ background: 'conic-gradient(red,yellow,lime,cyan,blue,magenta,red)' }} />
                     </label>
                   </div>
                 </div>
-                <Button variant="destructive" size="sm" className="w-full" onClick={() => editor.deleteAnnotation(editor.selectedId!)}>
+
+                {/* Delete layer */}
+                <Button variant="destructive" size="sm" className="w-full"
+                  onClick={() => editor.deleteAnnotation(editor.selectedId!)}>
                   <Trash2 className="w-4 h-4 mr-2" /> Remove Layer
                 </Button>
               </motion.div>
             )}
           </TabsContent>
 
-          {/* ── RETOUCH ── */}
+          {/* ────────────── RETOUCH ────────────── */}
           <TabsContent value="retouch" className="mt-0 space-y-5">
             <div className="space-y-1">
               <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Remove Text from Image</h3>
@@ -338,7 +439,7 @@ export function Sidebar({ editor }: { editor: EditorContextType }) {
             </div>
           </TabsContent>
 
-          {/* ── LAYOUT ── (mirrors Lumina's Layout tab exactly) */}
+          {/* ────────────── LAYOUT ────────────── */}
           <TabsContent value="layout" className="space-y-8 mt-0">
             <div className="space-y-4">
               <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Transform</h3>
@@ -378,7 +479,8 @@ export function Sidebar({ editor }: { editor: EditorContextType }) {
                     className="h-9 bg-background" />
                 </div>
               </div>
-              <Button variant="outline" className={`w-full h-9 text-xs justify-start ${editor.aspectLock ? 'border-primary text-primary' : ''}`}
+              <Button variant="outline"
+                className={`w-full h-9 text-xs justify-start ${editor.aspectLock ? 'border-primary text-primary' : ''}`}
                 onClick={() => editor.setAspectLock(!editor.aspectLock)}>
                 {editor.aspectLock && <Check className="w-3 h-3 mr-2" />} Lock Aspect Ratio
               </Button>
