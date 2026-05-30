@@ -1,4 +1,53 @@
+# FlowNote — robots.txt
+# https://useflownote.online
+
+# ─── All crawlers ─────────────────────────────────────────────────────────────
 User-agent: *
+
+# Allow public-facing pages
 Allow: /
 
+# Block admin and private routes (future-proofed)
+Disallow: /admin
+Disallow: /admin/
+Disallow: /dashboard/private
+Disallow: /dashboard/private/
+Disallow: /api/internal
+Disallow: /api/internal/
+Disallow: /_next/
+Disallow: /static/chunks/
+
+# Block query-string variants to prevent duplicate indexing
+Disallow: /*?*
+
+# ─── Googlebot-specific ───────────────────────────────────────────────────────
+User-agent: Googlebot
+
+# Allow JS and CSS so Google can render the SPA
+Allow: /src/
+Allow: /*.js$
+Allow: /*.css$
+Allow: /*.ts$
+
+# ─── Image crawlers ───────────────────────────────────────────────────────────
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# ─── Aggressive scrapers (rate-limit) ─────────────────────────────────────────
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Crawl-delay: 30
+
+User-agent: DotBot
+Crawl-delay: 30
+
+# ─── Sitemap location ─────────────────────────────────────────────────────────
 Sitemap: https://useflownote.online/sitemap.xml

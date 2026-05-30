@@ -1,0 +1,216 @@
+You are an expert Next.js SEO engineer.
+
+Implement a complete modern sitemap and SEO indexing system for my SaaS app “FlowNote”.
+
+====================================================
+APP INFO
+====================================================
+
+Brand:
+FlowNote
+
+Domain:
+https://useflownote.online
+
+Framework:
+Next.js App Router
+
+====================================================
+GOAL
+====================================================
+
+Create a scalable SEO architecture that helps Google:
+- discover all pages
+- crawl pages efficiently
+- index SEO landing pages faster
+- understand site structure
+
+The sitemap system must support:
+- future SEO expansion
+- dynamic pages
+- programmatic SEO
+- blog pages
+- feature pages
+- comparison pages
+
+====================================================
+CREATE
+====================================================
+
+1. sitemap.xml
+2. robots.txt
+3. dynamic sitemap generation
+4. SEO metadata helpers
+5. canonical URL support
+6. sitemap index structure
+7. page priority handling
+8. lastModified support
+
+====================================================
+IMPLEMENT NEXT.JS APP ROUTER STRUCTURE
+====================================================
+
+Create:
+- app/sitemap.ts
+- app/robots.ts
+
+Use modern Next.js metadata APIs.
+
+====================================================
+SITEMAP REQUIREMENTS
+====================================================
+
+The sitemap should include:
+
+----------------------------------------------------
+CORE PAGES
+----------------------------------------------------
+
+/
+/pricing
+/features
+/contact
+/about
+
+----------------------------------------------------
+SEO PAGES
+----------------------------------------------------
+
+/free-screenshot-editor-online
+/screenshot-editor-online
+/ai-screenshot-editor
+/edit-screenshot-online
+/best-screenshot-editor
+
+----------------------------------------------------
+FEATURE PAGES
+----------------------------------------------------
+
+/blur-screenshot-online
+/annotate-screenshot-online
+/crop-screenshot-online
+/add-text-to-screenshot
+/add-arrow-to-screenshot
+/highlight-screenshot
+/draw-on-screenshot
+
+----------------------------------------------------
+COMPARISON PAGES
+----------------------------------------------------
+
+/snagit-alternative
+/lightshot-alternative
+/greenshot-alternative
+/markup-hero-alternative
+/cleanshot-alternative
+
+----------------------------------------------------
+AUDIENCE PAGES
+----------------------------------------------------
+
+/screenshot-editor-for-developers
+/screenshot-editor-for-designers
+/screenshot-editor-for-teams
+/screenshot-editor-for-students
+/screenshot-editor-for-qa-testing
+
+====================================================
+SITEMAP FEATURES
+====================================================
+
+For every sitemap entry include:
+- url
+- lastModified
+- changeFrequency
+- priority
+
+Example priorities:
+- homepage = 1.0
+- core SEO pages = 0.9
+- feature pages = 0.8
+- comparison pages = 0.7
+
+====================================================
+ROBOTS.TXT REQUIREMENTS
+====================================================
+
+Create optimized robots.txt with:
+- sitemap location
+- allow public pages
+- block admin routes
+- block dashboard private routes
+- block API internals if needed
+
+Example blocked routes:
+- /admin
+- /dashboard/private
+- /api/internal
+
+====================================================
+TECHNICAL SEO
+====================================================
+
+Implement:
+- canonical URLs
+- OpenGraph metadata
+- Twitter metadata
+- structured data support
+- semantic HTML support
+
+====================================================
+AUTO SCALING
+====================================================
+
+The sitemap system should automatically support:
+- adding new SEO pages
+- adding blog posts
+- adding future AI tools
+- adding workspace pages
+
+Avoid hardcoding everything manually.
+
+Create reusable arrays/config objects for routes.
+
+====================================================
+CODE QUALITY
+====================================================
+
+The implementation must be:
+- production ready
+- scalable
+- clean architecture
+- modular
+- typed with TypeScript
+- easy to maintain
+
+====================================================
+SEO BEST PRACTICES
+====================================================
+
+Ensure:
+- no duplicate URLs
+- proper canonical handling
+- correct indexing behavior
+- crawl optimization
+- clean URL structure
+
+====================================================
+BONUS
+====================================================
+
+Also create:
+- reusable SEO utility helper
+- metadata generator function
+- centralized route config
+- dynamic metadata support
+
+====================================================
+FINAL GOAL
+====================================================
+
+Build a professional SEO foundation for FlowNote that:
+- helps Google index pages efficiently
+- supports long-term SEO growth
+- scales to hundreds of SEO pages
+- follows modern technical SEO best practices
+- feels like a production-grade SaaS architecture
