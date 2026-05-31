@@ -18,6 +18,8 @@
     "useUnknownInCatchVariables": true,
     "alwaysStrict": true,
     "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "target": "es2022",
     "types": [],
     "customConditions": ["workspace"]
