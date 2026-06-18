@@ -87,11 +87,11 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="rounded-2xl overflow-hidden transition-all duration-200"
-      style={{ background: 'rgba(17,24,39,0.6)', border: '1px solid rgba(255,255,255,0.08)' }}>
+      style={{ background: 'rgba(248,249,252,0.9)', border: '1px solid rgba(0,0,0,0.08)' }}>
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-6 py-5 text-left gap-4 hover:bg-white/[0.03] transition-colors">
-        <span className="font-medium text-base leading-snug text-white">{q}</span>
+        className="w-full flex items-center justify-between px-6 py-5 text-left gap-4 hover:bg-black/[0.03] transition-colors">
+        <span className="font-medium text-base leading-snug text-foreground">{q}</span>
         <ChevronDown className={`w-5 h-5 text-muted-foreground shrink-0 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
       </button>
       <AnimatePresence initial={false}>
@@ -101,7 +101,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}>
-            <p className="px-6 pb-5 text-muted-foreground leading-relaxed text-sm border-t border-white/[0.06] pt-4">
+            <p className="px-6 pb-5 text-muted-foreground leading-relaxed text-sm border-t border-black/[0.06] pt-4">
               {a}
             </p>
           </motion.div>
@@ -145,7 +145,7 @@ export function LandingPage({ onFileSelected }: Props) {
         onChange={handleFileChange} />
 
       {/* ── Sticky nav ── */}
-      <nav className="sticky top-0 z-50 fn-glass border-b border-white/[0.06]">
+      <nav className="sticky top-0 z-50 fn-glass border-b border-black/[0.06]">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5 font-bold text-xl tracking-tight">
             <div className="w-8 h-8 rounded-lg fn-gradient-bg flex items-center justify-center">
@@ -156,7 +156,7 @@ export function LandingPage({ onFileSelected }: Props) {
           <div className="hidden md:flex items-center gap-8">
             {NAV_LINKS.map(l => (
               <button key={l.label} onClick={l.onClick}
-                className="text-sm text-muted-foreground hover:text-white transition-colors">
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 {l.label}
               </button>
             ))}
@@ -178,12 +178,12 @@ export function LandingPage({ onFileSelected }: Props) {
 
         {/* Ambient glow circles */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full opacity-30"
-            style={{ background: 'radial-gradient(ellipse, rgba(79,70,229,0.4) 0%, transparent 70%)' }} />
-          <div className="absolute top-1/2 left-1/4 w-[400px] h-[400px] rounded-full opacity-20"
-            style={{ background: 'radial-gradient(ellipse, rgba(124,58,237,0.5) 0%, transparent 70%)' }} />
-          <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] rounded-full opacity-15"
-            style={{ background: 'radial-gradient(ellipse, rgba(79,70,229,0.4) 0%, transparent 70%)' }} />
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full opacity-20"
+            style={{ background: 'radial-gradient(ellipse, rgba(79,70,229,0.25) 0%, transparent 70%)' }} />
+          <div className="absolute top-1/2 left-1/4 w-[400px] h-[400px] rounded-full opacity-15"
+            style={{ background: 'radial-gradient(ellipse, rgba(124,58,237,0.2) 0%, transparent 70%)' }} />
+          <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] rounded-full opacity-10"
+            style={{ background: 'radial-gradient(ellipse, rgba(79,70,229,0.25) 0%, transparent 70%)' }} />
         </div>
 
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -228,19 +228,19 @@ export function LandingPage({ onFileSelected }: Props) {
             className={`relative rounded-3xl p-14 cursor-pointer transition-all duration-300 group ${dragging ? 'scale-[1.01]' : ''}`}
             style={{
               background: dragging
-                ? 'rgba(79,70,229,0.15)'
-                : 'rgba(17,24,39,0.5)',
+                ? 'rgba(79,70,229,0.08)'
+                : 'rgba(248,249,252,0.8)',
               border: dragging
                 ? '2px dashed rgba(79,70,229,0.8)'
-                : '2px dashed rgba(255,255,255,0.1)',
+                : '2px dashed rgba(0,0,0,0.12)',
               backdropFilter: 'blur(16px)',
-              boxShadow: dragging ? '0 0 40px rgba(79,70,229,0.3)' : 'none',
+              boxShadow: dragging ? '0 0 40px rgba(79,70,229,0.15)' : 'none',
             }}>
             <div className={`w-16 h-16 rounded-2xl fn-gradient-bg flex items-center justify-center mx-auto mb-5 transition-transform duration-300 ${dragging ? 'scale-110' : 'group-hover:scale-105'}`}
               style={{ boxShadow: '0 8px 32px rgba(79,70,229,0.4)' }}>
               <UploadCloud className="w-7 h-7 text-white" />
             </div>
-            <h3 className="text-xl font-bold mb-2 text-white">
+            <h3 className="text-xl font-bold mb-2 text-foreground">
               {dragging ? 'Drop to start editing' : 'Drop your screenshot here'}
             </h3>
             <p className="text-muted-foreground mb-6 text-sm">or click to browse files</p>
@@ -255,7 +255,7 @@ export function LandingPage({ onFileSelected }: Props) {
           </motion.div>
 
           <button onClick={() => scrollTo(featuresRef)}
-            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-white transition-colors mx-auto group">
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mx-auto group">
             Explore all features
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </button>
@@ -264,10 +264,10 @@ export function LandingPage({ onFileSelected }: Props) {
 
       {/* ── Features ── */}
       <section ref={featuresRef} className="py-28 px-6 relative overflow-hidden"
-        style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] opacity-20"
-            style={{ background: 'radial-gradient(ellipse, rgba(79,70,229,0.5) 0%, transparent 70%)' }} />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] opacity-10"
+            style={{ background: 'radial-gradient(ellipse, rgba(79,70,229,0.4) 0%, transparent 70%)' }} />
         </div>
         <div className="max-w-6xl mx-auto relative">
           <div className="text-center mb-16 space-y-4">
@@ -291,8 +291,8 @@ export function LandingPage({ onFileSelected }: Props) {
                 transition={{ delay: i * 0.08, duration: 0.45 }}
                 className="rounded-2xl p-6 space-y-4 fn-card-glow transition-all duration-300 cursor-default"
                 style={{
-                  background: 'rgba(17,24,39,0.6)',
-                  border: '1px solid rgba(255,255,255,0.07)',
+                  background: 'rgba(248,249,252,0.9)',
+                  border: '1px solid rgba(0,0,0,0.07)',
                   backdropFilter: 'blur(12px)',
                 }}>
                 <div className="w-10 h-10 rounded-xl fn-gradient-bg flex items-center justify-center"
@@ -300,7 +300,7 @@ export function LandingPage({ onFileSelected }: Props) {
                   <span className="text-white">{f.icon}</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-base text-white mb-1.5">{f.title}</h3>
+                  <h3 className="font-semibold text-base text-foreground mb-1.5">{f.title}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">{f.desc}</p>
                 </div>
               </motion.div>
@@ -310,7 +310,7 @@ export function LandingPage({ onFileSelected }: Props) {
       </section>
 
       {/* ── Privacy banner ── */}
-      <section className="py-20 px-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      <section className="py-20 px-6" style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -319,8 +319,8 @@ export function LandingPage({ onFileSelected }: Props) {
             transition={{ duration: 0.5 }}
             className="rounded-3xl px-8 py-10 flex flex-col md:flex-row items-center gap-6 text-center md:text-left"
             style={{
-              background: 'linear-gradient(135deg, rgba(79,70,229,0.12) 0%, rgba(124,58,237,0.12) 100%)',
-              border: '1px solid rgba(79,70,229,0.25)',
+              background: 'linear-gradient(135deg, rgba(79,70,229,0.07) 0%, rgba(124,58,237,0.07) 100%)',
+              border: '1px solid rgba(79,70,229,0.2)',
               backdropFilter: 'blur(16px)',
             }}>
             <div className="w-14 h-14 rounded-2xl fn-gradient-bg flex items-center justify-center shrink-0"
@@ -328,7 +328,7 @@ export function LandingPage({ onFileSelected }: Props) {
               <Shield className="w-7 h-7 text-white" />
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-bold mb-1.5 text-white">Your screenshots never leave your device</h3>
+              <h3 className="text-xl font-bold mb-1.5 text-foreground">Your screenshots never leave your device</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
                 FlowNote runs entirely in your browser using the Canvas API. No files are uploaded to any server.
                 No analytics. No tracking. Your screenshots stay private — always.
@@ -346,10 +346,10 @@ export function LandingPage({ onFileSelected }: Props) {
 
       {/* ── FAQ ── */}
       <section ref={faqRef} className="py-28 px-6 relative overflow-hidden"
-        style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[200px] opacity-15"
-            style={{ background: 'radial-gradient(ellipse, rgba(124,58,237,0.6) 0%, transparent 70%)' }} />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[200px] opacity-10"
+            style={{ background: 'radial-gradient(ellipse, rgba(124,58,237,0.4) 0%, transparent 70%)' }} />
         </div>
         <div className="max-w-3xl mx-auto relative">
           <div className="text-center mb-14 space-y-4">
@@ -365,7 +365,7 @@ export function LandingPage({ onFileSelected }: Props) {
       </section>
 
       {/* ── Footer ── */}
-      <footer style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: 'rgba(11,16,32,0.8)' }}>
+      <footer style={{ borderTop: '1px solid rgba(0,0,0,0.06)', background: 'rgba(248,249,252,0.9)' }}>
         <div className="max-w-6xl mx-auto px-6 py-12">
           <div className="flex flex-col md:flex-row items-start justify-between gap-8">
             <div className="space-y-3">
@@ -384,9 +384,9 @@ export function LandingPage({ onFileSelected }: Props) {
             <div className="grid grid-cols-2 gap-x-16 gap-y-4 text-sm">
               <div className="space-y-2">
                 <p className="font-semibold text-xs uppercase tracking-wider text-muted-foreground mb-3">Product</p>
-                <button onClick={() => scrollTo(featuresRef)} className="block text-muted-foreground hover:text-white transition-colors">Features</button>
-                <button onClick={() => scrollTo(faqRef)} className="block text-muted-foreground hover:text-white transition-colors">FAQ</button>
-                <button onClick={() => fileInputRef.current?.click()} className="block text-muted-foreground hover:text-white transition-colors">Open Screenshot</button>
+                <button onClick={() => scrollTo(featuresRef)} className="block text-muted-foreground hover:text-foreground transition-colors">Features</button>
+                <button onClick={() => scrollTo(faqRef)} className="block text-muted-foreground hover:text-foreground transition-colors">FAQ</button>
+                <button onClick={() => fileInputRef.current?.click()} className="block text-muted-foreground hover:text-foreground transition-colors">Open Screenshot</button>
               </div>
               <div className="space-y-2">
                 <p className="font-semibold text-xs uppercase tracking-wider text-muted-foreground mb-3">Tools</p>
@@ -398,7 +398,7 @@ export function LandingPage({ onFileSelected }: Props) {
           </div>
 
           <div className="mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground"
-            style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+            style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
             <p>© {new Date().getFullYear()} FlowNote. All rights reserved.</p>
             <p className="text-xs">Built with React · Runs 100% in your browser · No data collected</p>
           </div>
