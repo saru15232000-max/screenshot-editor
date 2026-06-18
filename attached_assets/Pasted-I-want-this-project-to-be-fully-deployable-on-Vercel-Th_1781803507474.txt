@@ -1,0 +1,103 @@
+I want this project to be fully deployable on Vercel.
+
+This is an online screenshot editor application.
+
+Important:
+
+* There is NO login system.
+* There is NO signup system.
+* There is NO authentication.
+* There is NO user database.
+* Do not add authentication, user accounts, sessions, cookies, or database integrations.
+* Only fix deployment, build, TypeScript, and Vercel compatibility issues.
+
+Perform a complete production deployment audit and automatically fix all issues.
+
+Tasks:
+
+1. TypeScript Audit
+
+* Find and fix all TypeScript errors.
+* Resolve all import/export issues.
+* Fix CommonJS and ES Module incompatibilities.
+* Fix package imports such as pino-http, express, cors, dotenv, and other dependencies.
+* Ensure strict TypeScript compilation succeeds.
+
+2. Vercel Compatibility Audit
+
+* Verify the application structure is compatible with Vercel.
+* Create or update vercel.json if needed.
+* Verify build commands.
+* Verify output directories.
+* Verify static asset handling.
+* Remove any Replit-specific deployment settings that could fail on Vercel.
+
+3. Package Audit
+
+* Identify missing dependencies.
+* Identify missing @types packages.
+* Remove unused packages.
+* Resolve dependency conflicts.
+* Ensure package.json contains correct scripts:
+
+  * dev
+  * build
+  * start
+
+4. Build Verification
+
+* Simulate a clean production environment.
+* Assume node_modules does not exist.
+* Perform a fresh dependency install.
+* Verify npm run build succeeds.
+* Verify production build has zero TypeScript errors.
+* Verify deployment can succeed on Vercel.
+
+5. Frontend Validation
+
+* Check all React/Vite/frontend imports.
+* Fix broken imports.
+* Fix asset paths.
+* Fix image references.
+* Fix CSS imports.
+* Ensure production asset bundling works.
+
+6. Backend Validation (if backend exists)
+
+* Verify Express server compiles correctly.
+* Verify middleware configuration.
+* Verify API routes compile successfully.
+* Fix incompatible imports.
+* Fix production startup issues.
+
+7. TypeScript Configuration
+   Review and correct:
+
+* tsconfig.json
+* module
+* moduleResolution
+* target
+* rootDir
+* outDir
+* esModuleInterop
+* allowSyntheticDefaultImports
+* skipLibCheck
+
+8. Deployment Validation
+   Continue fixing errors until:
+
+* npm install succeeds
+* npm run build succeeds
+* TypeScript compilation succeeds
+* Vercel build succeeds
+* No deployment-blocking errors remain
+
+9. Reporting
+   After all fixes:
+
+* List every changed file.
+* Explain every change.
+* Show the final Vercel deployment configuration.
+* Confirm the project is production-ready.
+
+Do not stop after fixing the first error. Continue scanning the entire project and fix all deployment-related issues until the build passes successfully.

@@ -1,5 +1,22 @@
 export type Point = { x: number; y: number };
 
+export type AnnotationType = 'arrow' | 'rect' | 'text' | 'pen' | 'blur';
+
+export type Annotation = {
+  id: string;
+  type: AnnotationType;
+  points: Point[];
+  color: string;
+  size: number;
+  text?: string;
+  italic?: boolean;
+  bold?: boolean;
+  fontSize?: number;
+  fontFamily?: string;
+  opacity?: number;
+  align?: 'left' | 'center' | 'right';
+};
+
 export type TextAnnotation = {
   id: string;
   text: string;

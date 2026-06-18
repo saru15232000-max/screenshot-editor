@@ -1,6 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import { TextAnnotation, Adjustments, DEFAULT_ADJUSTMENTS, Transform, DEFAULT_TRANSFORM } from '../types/editor';
 
+type ActiveTool = 'select' | 'arrow' | 'rect' | 'text' | 'pen' | 'blur' | 'crop';
+
 function genId() { return Math.random().toString(36).slice(2, 10); }
 
 export function useEditor() {
@@ -45,6 +47,13 @@ export function useEditor() {
   const [textColorEyedropper, setTextColorEyedropper] = useState(false);
   const [fontAnalyzerActive, setFontAnalyzerActive] = useState(false);
   const [fontSuggestions, setFontSuggestions] = useState<Array<{ value: string; label: string; confidence: number }>>([]);
+
+  // Toolbar active tool + undo/redo stubs (wired via CanvasWorkspace refs at runtime)
+  const [activeTool, setActiveTool] = useState<ActiveTool>('select');
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
+  const undo = useCallback(() => { (window as any).__editorUndo?.(); }, []);
+  const redo = useCallback(() => { (window as any).__editorRedo?.(); }, []);
 
   // Download format
   const [downloadFormat, setDownloadFormat] = useState('image/png');
@@ -203,6 +212,8 @@ export function useEditor() {
     downloadFormat, setDownloadFormat,
     addNewTextLayer, deleteAnnotation,
     handleImageUpload, reset,
+    activeTool, setActiveTool,
+    undo, redo, canUndo, canRedo, setCanUndo, setCanRedo,
   };
 }
 

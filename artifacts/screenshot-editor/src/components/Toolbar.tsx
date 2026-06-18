@@ -15,6 +15,13 @@ const tools = [
 ] as const;
 
 export function Toolbar({ editor }: { editor: EditorContextType }) {
+  const activeTool = editor.activeTool;
+  const setActiveTool = editor.setActiveTool;
+  const undo = editor.undo;
+  const redo = editor.redo;
+  const canUndo = editor.canUndo;
+  const canRedo = editor.canRedo;
+
   return (
     <div className="w-14 bg-card border-r border-border flex flex-col items-center py-3 gap-1 shrink-0 z-10">
       <div className="flex flex-col gap-1 w-full px-2">
@@ -22,10 +29,10 @@ export function Toolbar({ editor }: { editor: EditorContextType }) {
           <Tooltip key={tool.id} delayDuration={0}>
             <TooltipTrigger asChild>
               <Button
-                variant={editor.activeTool === tool.id ? 'default' : 'ghost'}
+                variant={activeTool === tool.id ? 'default' : 'ghost'}
                 size="icon"
                 className="w-10 h-10 rounded-lg"
-                onClick={() => editor.setActiveTool(tool.id)}
+                onClick={() => setActiveTool(tool.id)}
                 data-testid={`tool-${tool.id}`}
               >
                 <tool.icon className="w-4 h-4" />
@@ -49,8 +56,8 @@ export function Toolbar({ editor }: { editor: EditorContextType }) {
               variant="ghost"
               size="icon"
               className="w-10 h-10 rounded-lg"
-              onClick={editor.undo}
-              disabled={!editor.canUndo}
+              onClick={undo}
+              disabled={!canUndo}
               data-testid="button-undo"
             >
               <Undo2 className="w-4 h-4" />
@@ -65,8 +72,8 @@ export function Toolbar({ editor }: { editor: EditorContextType }) {
               variant="ghost"
               size="icon"
               className="w-10 h-10 rounded-lg"
-              onClick={editor.redo}
-              disabled={!editor.canRedo}
+              onClick={redo}
+              disabled={!canRedo}
               data-testid="button-redo"
             >
               <Redo2 className="w-4 h-4" />
