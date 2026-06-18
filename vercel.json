@@ -1,6 +1,6 @@
 {
-  "buildCommand": "node scripts/generate-sitemap.mjs && vite build --config vite.config.ts",
-  "outputDirectory": "dist/public",
+  "buildCommand": "pnpm --filter @workspace/screenshot-editor run build",
+  "outputDirectory": "artifacts/screenshot-editor/dist/public",
   "installCommand": "pnpm install --frozen-lockfile",
   "framework": null,
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
