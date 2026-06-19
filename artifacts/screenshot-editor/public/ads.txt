@@ -11,4 +11,4 @@
 # Format: <ad network domain>, <publisher ID>, <account type>, <certificate authority ID>
 # ─────────────────────────────────────────────────────────────────────────────
 
-google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+google.com, pub-8032318964552823, DIRECT, f08c47fec0942fa0
