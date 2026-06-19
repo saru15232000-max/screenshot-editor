@@ -35,6 +35,12 @@
     <priority>0.50</priority>
   </url>
   <url>
+    <loc>https://useflownote.online/terms-and-conditions</loc>
+    <lastmod>2026-06-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.40</priority>
+  </url>
+  <url>
     <loc>https://useflownote.online/cookie-policy</loc>
     <lastmod>2026-06-19</lastmod>
     <changefreq>yearly</changefreq>
@@ -45,6 +51,72 @@
     <lastmod>2026-06-19</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.40</priority>
+  </url>
+  <url>
+    <loc>https://useflownote.online/guides</loc>
+    <lastmod>2026-06-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://useflownote.online/guides/how-to-edit-screenshots</loc>
+    <lastmod>2026-06-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://useflownote.online/guides/how-to-annotate-screenshots</loc>
+    <lastmod>2026-06-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://useflownote.online/guides/how-to-blur-sensitive-information</loc>
+    <lastmod>2026-06-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://useflownote.online/guides/how-to-redact-personal-data</loc>
+    <lastmod>2026-06-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://useflownote.online/guides/how-to-create-bug-report-screenshots</loc>
+    <lastmod>2026-06-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.82</priority>
+  </url>
+  <url>
+    <loc>https://useflownote.online/guides/how-to-take-professional-screenshots</loc>
+    <lastmod>2026-06-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.82</priority>
+  </url>
+  <url>
+    <loc>https://useflownote.online/guides/how-to-share-screenshots-safely</loc>
+    <lastmod>2026-06-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.82</priority>
+  </url>
+  <url>
+    <loc>https://useflownote.online/guides/best-screenshot-tools</loc>
+    <lastmod>2026-06-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.88</priority>
+  </url>
+  <url>
+    <loc>https://useflownote.online/guides/screenshot-documentation-guide</loc>
+    <lastmod>2026-06-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.82</priority>
+  </url>
+  <url>
+    <loc>https://useflownote.online/guides/social-media-screenshot-guide</loc>
+    <lastmod>2026-06-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.82</priority>
   </url>
   <url>
     <loc>https://useflownote.online/free-screenshot-editor-online</loc>

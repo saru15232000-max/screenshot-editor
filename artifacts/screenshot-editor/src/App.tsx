@@ -22,6 +22,17 @@ import Disclaimer from "@/pages/legal/Disclaimer";
 import CookiePolicy from "@/pages/legal/CookiePolicy";
 import ContactPage from "@/pages/legal/ContactPage";
 import AboutPage from "@/pages/legal/AboutPage";
+import GuidesIndex from "@/pages/guides/GuidesIndex";
+import HowToEditScreenshots from "@/pages/guides/HowToEditScreenshots";
+import HowToAnnotateScreenshots from "@/pages/guides/HowToAnnotateScreenshots";
+import HowToBlurSensitiveInfo from "@/pages/guides/HowToBlurSensitiveInfo";
+import HowToRedactPersonalData from "@/pages/guides/HowToRedactPersonalData";
+import HowToCreateBugReports from "@/pages/guides/HowToCreateBugReports";
+import HowToTakeProfessionalScreenshots from "@/pages/guides/HowToTakeProfessionalScreenshots";
+import HowToShareScreenshotsSafely from "@/pages/guides/HowToShareScreenshotsSafely";
+import BestScreenshotTools from "@/pages/guides/BestScreenshotTools";
+import ScreenshotDocumentationGuide from "@/pages/guides/ScreenshotDocumentationGuide";
+import SocialMediaScreenshotGuide from "@/pages/guides/SocialMediaScreenshotGuide";
 
 const queryClient = new QueryClient();
 
@@ -34,8 +45,21 @@ function Router() {
       <Route path="/contact" component={ContactPage} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/terms-of-service" component={TermsOfService} />
+      <Route path="/terms-and-conditions" component={TermsOfService} />
       <Route path="/cookie-policy" component={CookiePolicy} />
       <Route path="/disclaimer" component={Disclaimer} />
+      {/* ── Learning Center — guide articles ── */}
+      <Route path="/guides" component={GuidesIndex} />
+      <Route path="/guides/how-to-edit-screenshots" component={HowToEditScreenshots} />
+      <Route path="/guides/how-to-annotate-screenshots" component={HowToAnnotateScreenshots} />
+      <Route path="/guides/how-to-blur-sensitive-information" component={HowToBlurSensitiveInfo} />
+      <Route path="/guides/how-to-redact-personal-data" component={HowToRedactPersonalData} />
+      <Route path="/guides/how-to-create-bug-report-screenshots" component={HowToCreateBugReports} />
+      <Route path="/guides/how-to-take-professional-screenshots" component={HowToTakeProfessionalScreenshots} />
+      <Route path="/guides/how-to-share-screenshots-safely" component={HowToShareScreenshotsSafely} />
+      <Route path="/guides/best-screenshot-tools" component={BestScreenshotTools} />
+      <Route path="/guides/screenshot-documentation-guide" component={ScreenshotDocumentationGuide} />
+      <Route path="/guides/social-media-screenshot-guide" component={SocialMediaScreenshotGuide} />
       {/* ── Core editorial pages — hand-crafted deep content ── */}
       <Route path="/free-screenshot-editor-online" component={FreeScreenshotEditor} />
       <Route path="/annotate-screenshot-online" component={AnnotateScreenshot} />

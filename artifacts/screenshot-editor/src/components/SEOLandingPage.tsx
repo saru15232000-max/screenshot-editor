@@ -422,6 +422,7 @@ export function SEOLandingPage({
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
               <Link href="/about" className="hover:text-white transition-colors">About</Link>
               <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+              <Link href="/guides" className="hover:text-white transition-colors">Guides</Link>
               <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
               <Link href="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
               <Link href="/cookie-policy" className="hover:text-white transition-colors">Cookie Policy</Link>

@@ -1,0 +1,209 @@
+You are a senior Google AdSense reviewer, SEO architect, content strategist, and Vite/React engineer.
+
+Your job is to make this website pass AdSense review with the highest possible chance of approval.
+
+Do not just give recommendations.
+
+Actually implement all changes directly in the codebase.
+
+==================================================
+PHASE 1: FULL ADSENSE AUDIT
+==================================================
+
+Scan the entire project and identify:
+
+- Thin content
+- Placeholder content
+- Empty pages
+- Demo content
+- Broken links
+- Missing metadata
+- Missing legal pages
+- Missing trust signals
+- Missing SEO
+- Missing accessibility features
+- Missing sitemap entries
+- Missing robots directives
+
+Generate an audit report and then automatically fix everything.
+
+==================================================
+PHASE 2: CREATE REQUIRED TRUST PAGES
+==================================================
+
+Create complete pages with production-quality content:
+
+/about
+/contact
+/privacy-policy
+/terms-and-conditions
+/cookie-policy
+/disclaimer
+
+Requirements:
+
+- Professional writing
+- SEO optimized
+- Mobile responsive
+- Internal linking
+- Included in sitemap
+- Included in footer
+
+==================================================
+PHASE 3: MAKE THE SITE LOOK LIKE A REAL BUSINESS
+==================================================
+
+Transform the site from "tool only" into a legitimate publisher website.
+
+Add:
+
+- About section
+- Mission statement
+- Why this tool exists
+- How it works
+- Benefits section
+- FAQ section
+- Contact information
+- Trust section
+- Privacy commitments
+
+Create a professional footer on every page.
+
+==================================================
+PHASE 4: CONTENT EXPANSION
+==================================================
+
+Google rejects many tool sites because they have little original content.
+
+Create a new Learning Center section.
+
+Generate these pages:
+
+/guides/how-to-edit-screenshots
+/guides/how-to-blur-sensitive-information
+/guides/how-to-annotate-screenshots
+/guides/how-to-create-bug-report-screenshots
+/guides/how-to-take-professional-screenshots
+/guides/how-to-share-screenshots-safely
+/guides/how-to-redact-personal-data
+/guides/best-screenshot-tools
+/guides/screenshot-documentation-guide
+/guides/social-media-screenshot-guide
+
+Each article must contain:
+
+- 1200+ words
+- Original content
+- H1, H2, H3 structure
+- FAQ section
+- Internal links
+- SEO metadata
+
+==================================================
+PHASE 5: SEO IMPLEMENTATION
+==================================================
+
+Add:
+
+- Unique title tags
+- Meta descriptions
+- Canonical URLs
+- Open Graph tags
+- Twitter cards
+
+Implement structured data:
+
+- Organization
+- WebSite
+- FAQPage
+- BreadcrumbList
+
+Add JSON-LD to relevant pages.
+
+==================================================
+PHASE 6: TECHNICAL SEO
+==================================================
+
+Verify and fix:
+
+- robots.txt
+- sitemap.xml
+- canonical tags
+- crawlability
+- no broken routes
+- no duplicate titles
+- no duplicate descriptions
+
+Add all new pages to sitemap generation.
+
+==================================================
+PHASE 7: ACCESSIBILITY
+==================================================
+
+Audit and improve:
+
+- ARIA labels
+- Alt text
+- Keyboard navigation
+- Focus states
+- Color contrast
+- Form accessibility
+
+==================================================
+PHASE 8: ADSENSE PREPARATION
+==================================================
+
+Create:
+
+public/ads.txt
+
+Content:
+
+google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+
+Add comment explaining where the real publisher ID should be inserted.
+
+Verify:
+
+- No intrusive popups
+- No auto redirects
+- No misleading buttons
+- No fake download buttons
+- No policy violations
+
+==================================================
+PHASE 9: HOMEPAGE UPGRADE
+==================================================
+
+Homepage must include:
+
+- Hero section
+- Feature section
+- Benefits section
+- FAQ section
+- Trust section
+- Educational content
+- Internal links
+
+Target homepage content:
+1000+ words
+
+==================================================
+PHASE 10: FINAL REPORT
+==================================================
+
+After implementation provide:
+
+PASS/FAIL:
+- AdSense readiness
+- SEO readiness
+- Trust readiness
+- Legal readiness
+- Accessibility readiness
+- Technical readiness
+
+List:
+- Every file created
+- Every file modified
+- Remaining risks
+- Estimated AdSense approval probability

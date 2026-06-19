@@ -403,6 +403,14 @@ export function LandingPage({ onFileSelected }: Props) {
                 ))}
               </div>
               <div className="space-y-2">
+                <p className="font-semibold text-xs uppercase tracking-wider text-muted-foreground mb-3">Guides</p>
+                <a href="/guides" className="block text-muted-foreground hover:text-foreground transition-colors">Learning Center</a>
+                <a href="/guides/how-to-edit-screenshots" className="block text-muted-foreground hover:text-foreground transition-colors">Edit Screenshots</a>
+                <a href="/guides/how-to-annotate-screenshots" className="block text-muted-foreground hover:text-foreground transition-colors">Annotate Screenshots</a>
+                <a href="/guides/how-to-blur-sensitive-information" className="block text-muted-foreground hover:text-foreground transition-colors">Blur Sensitive Info</a>
+                <a href="/guides/best-screenshot-tools" className="block text-muted-foreground hover:text-foreground transition-colors">Best Tools 2025</a>
+              </div>
+              <div className="space-y-2">
                 <p className="font-semibold text-xs uppercase tracking-wider text-muted-foreground mb-3">Legal</p>
                 <a href="/privacy-policy" className="block text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</a>
                 <a href="/terms-of-service" className="block text-muted-foreground hover:text-foreground transition-colors">Terms of Service</a>

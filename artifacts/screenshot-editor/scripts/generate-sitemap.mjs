@@ -27,8 +27,22 @@ const ROUTES = [
   { slug: 'contact', priority: 0.7, changeFreq: 'monthly', lastMod: TODAY },
   { slug: 'privacy-policy', priority: 0.5, changeFreq: 'yearly', lastMod: TODAY },
   { slug: 'terms-of-service', priority: 0.5, changeFreq: 'yearly', lastMod: TODAY },
+  { slug: 'terms-and-conditions', priority: 0.4, changeFreq: 'yearly', lastMod: TODAY },
   { slug: 'cookie-policy', priority: 0.4, changeFreq: 'yearly', lastMod: TODAY },
   { slug: 'disclaimer', priority: 0.4, changeFreq: 'yearly', lastMod: TODAY },
+
+  // LEARNING CENTER — GUIDE ARTICLES
+  { slug: 'guides', priority: 0.9, changeFreq: 'weekly', lastMod: TODAY },
+  { slug: 'guides/how-to-edit-screenshots', priority: 0.85, changeFreq: 'monthly', lastMod: TODAY },
+  { slug: 'guides/how-to-annotate-screenshots', priority: 0.85, changeFreq: 'monthly', lastMod: TODAY },
+  { slug: 'guides/how-to-blur-sensitive-information', priority: 0.85, changeFreq: 'monthly', lastMod: TODAY },
+  { slug: 'guides/how-to-redact-personal-data', priority: 0.85, changeFreq: 'monthly', lastMod: TODAY },
+  { slug: 'guides/how-to-create-bug-report-screenshots', priority: 0.82, changeFreq: 'monthly', lastMod: TODAY },
+  { slug: 'guides/how-to-take-professional-screenshots', priority: 0.82, changeFreq: 'monthly', lastMod: TODAY },
+  { slug: 'guides/how-to-share-screenshots-safely', priority: 0.82, changeFreq: 'monthly', lastMod: TODAY },
+  { slug: 'guides/best-screenshot-tools', priority: 0.88, changeFreq: 'monthly', lastMod: TODAY },
+  { slug: 'guides/screenshot-documentation-guide', priority: 0.82, changeFreq: 'monthly', lastMod: TODAY },
+  { slug: 'guides/social-media-screenshot-guide', priority: 0.82, changeFreq: 'monthly', lastMod: TODAY },
 
   // HAND-CRAFTED PRIORITY PAGES
   { slug: 'free-screenshot-editor-online', priority: 0.95, changeFreq: 'weekly', lastMod: TODAY },
