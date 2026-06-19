@@ -43,6 +43,56 @@ export const ROUTES: RouteConfig[] = [
     lastModified: TODAY,
   },
 
+  // ─── LEGAL & INFORMATIONAL PAGES ───────────────────────────────────────────
+  {
+    slug: 'about',
+    label: 'About FlowNote',
+    priority: 0.8,
+    changeFrequency: 'monthly',
+    category: 'homepage',
+    lastModified: TODAY,
+  },
+  {
+    slug: 'contact',
+    label: 'Contact Us',
+    priority: 0.7,
+    changeFrequency: 'monthly',
+    category: 'homepage',
+    lastModified: TODAY,
+  },
+  {
+    slug: 'privacy-policy',
+    label: 'Privacy Policy',
+    priority: 0.5,
+    changeFrequency: 'yearly',
+    category: 'homepage',
+    lastModified: TODAY,
+  },
+  {
+    slug: 'terms-of-service',
+    label: 'Terms of Service',
+    priority: 0.5,
+    changeFrequency: 'yearly',
+    category: 'homepage',
+    lastModified: TODAY,
+  },
+  {
+    slug: 'cookie-policy',
+    label: 'Cookie Policy',
+    priority: 0.4,
+    changeFrequency: 'yearly',
+    category: 'homepage',
+    lastModified: TODAY,
+  },
+  {
+    slug: 'disclaimer',
+    label: 'Disclaimer',
+    priority: 0.4,
+    changeFrequency: 'yearly',
+    category: 'homepage',
+    lastModified: TODAY,
+  },
+
   // ─── HAND-CRAFTED PRIORITY PAGES (deep content, primary targets) ───────────
   {
     slug: 'free-screenshot-editor-online',

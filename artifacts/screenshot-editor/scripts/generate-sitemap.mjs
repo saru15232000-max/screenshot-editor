@@ -22,6 +22,14 @@ const ROUTES = [
   // HOMEPAGE
   { slug: '', priority: 1.0, changeFreq: 'daily', lastMod: TODAY },
 
+  // LEGAL & INFORMATIONAL PAGES
+  { slug: 'about', priority: 0.8, changeFreq: 'monthly', lastMod: TODAY },
+  { slug: 'contact', priority: 0.7, changeFreq: 'monthly', lastMod: TODAY },
+  { slug: 'privacy-policy', priority: 0.5, changeFreq: 'yearly', lastMod: TODAY },
+  { slug: 'terms-of-service', priority: 0.5, changeFreq: 'yearly', lastMod: TODAY },
+  { slug: 'cookie-policy', priority: 0.4, changeFreq: 'yearly', lastMod: TODAY },
+  { slug: 'disclaimer', priority: 0.4, changeFreq: 'yearly', lastMod: TODAY },
+
   // HAND-CRAFTED PRIORITY PAGES
   { slug: 'free-screenshot-editor-online', priority: 0.95, changeFreq: 'weekly', lastMod: TODAY },
   { slug: 'annotate-screenshot-online', priority: 0.95, changeFreq: 'weekly', lastMod: TODAY },

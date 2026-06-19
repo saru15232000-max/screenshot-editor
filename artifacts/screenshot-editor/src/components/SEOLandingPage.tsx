@@ -411,15 +411,28 @@ export function SEOLandingPage({
 
       {/* Footer */}
       <footer style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: 'rgba(11,16,32,0.8)' }}>
-        <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <Link href="/" className="flex items-center gap-2 font-bold">
-            <div className="w-6 h-6 rounded-md fn-gradient-bg flex items-center justify-center">
-              <Layers className="w-3 h-3 text-white" />
+        <div className="max-w-6xl mx-auto px-6 py-10">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-6">
+            <Link href="/" className="flex items-center gap-2 font-bold">
+              <div className="w-6 h-6 rounded-md fn-gradient-bg flex items-center justify-center">
+                <Layers className="w-3 h-3 text-white" />
+              </div>
+              <span className="fn-gradient-text">FlowNote</span>
+            </Link>
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+              <Link href="/about" className="hover:text-white transition-colors">About</Link>
+              <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+              <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
+              <Link href="/cookie-policy" className="hover:text-white transition-colors">Cookie Policy</Link>
+              <Link href="/disclaimer" className="hover:text-white transition-colors">Disclaimer</Link>
             </div>
-            <span className="fn-gradient-text">FlowNote</span>
-          </Link>
-          <p>© {new Date().getFullYear()} FlowNote · useflownote.online</p>
-          <p className="text-xs">100% browser-based · No uploads · No tracking</p>
+          </div>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground"
+            style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1.5rem' }}>
+            <p>© {new Date().getFullYear()} FlowNote · useflownote.online</p>
+            <p className="text-xs">100% browser-based · No uploads · No tracking</p>
+          </div>
         </div>
       </footer>
     </div>

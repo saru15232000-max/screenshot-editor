@@ -381,18 +381,33 @@ export function LandingPage({ onFileSelected }: Props) {
               <p className="text-xs" style={{ color: '#a5b4fc' }}>Capture. Organize. Flow.</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-x-16 gap-y-4 text-sm">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-12 gap-y-4 text-sm">
               <div className="space-y-2">
                 <p className="font-semibold text-xs uppercase tracking-wider text-muted-foreground mb-3">Product</p>
                 <button onClick={() => scrollTo(featuresRef)} className="block text-muted-foreground hover:text-foreground transition-colors">Features</button>
                 <button onClick={() => scrollTo(faqRef)} className="block text-muted-foreground hover:text-foreground transition-colors">FAQ</button>
                 <button onClick={() => fileInputRef.current?.click()} className="block text-muted-foreground hover:text-foreground transition-colors">Open Screenshot</button>
+                <a href="/about" className="block text-muted-foreground hover:text-foreground transition-colors">About</a>
+                <a href="/contact" className="block text-muted-foreground hover:text-foreground transition-colors">Contact</a>
               </div>
               <div className="space-y-2">
                 <p className="font-semibold text-xs uppercase tracking-wider text-muted-foreground mb-3">Tools</p>
-                {['Smart Adjustments', 'Rich Text Layers', 'Font Analyzer', 'Smart Retouch', 'Instant Export'].map(t => (
-                  <p key={t} className="text-muted-foreground text-sm">{t}</p>
+                {[
+                  { href: '/free-screenshot-editor-online', label: 'Free Editor' },
+                  { href: '/annotate-screenshot-online', label: 'Annotate' },
+                  { href: '/blur-screenshot-online', label: 'Blur' },
+                  { href: '/add-text-to-screenshot-online', label: 'Add Text' },
+                  { href: '/ai-screenshot-editor', label: 'AI Editor' },
+                ].map(t => (
+                  <a key={t.href} href={t.href} className="block text-muted-foreground hover:text-foreground transition-colors text-sm">{t.label}</a>
                 ))}
+              </div>
+              <div className="space-y-2">
+                <p className="font-semibold text-xs uppercase tracking-wider text-muted-foreground mb-3">Legal</p>
+                <a href="/privacy-policy" className="block text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</a>
+                <a href="/terms-of-service" className="block text-muted-foreground hover:text-foreground transition-colors">Terms of Service</a>
+                <a href="/cookie-policy" className="block text-muted-foreground hover:text-foreground transition-colors">Cookie Policy</a>
+                <a href="/disclaimer" className="block text-muted-foreground hover:text-foreground transition-colors">Disclaimer</a>
               </div>
             </div>
           </div>

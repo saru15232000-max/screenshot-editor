@@ -1,0 +1,149 @@
+Act as a senior SEO engineer, AdSense compliance reviewer, technical auditor, and conversion-focused publisher.
+
+My goal is to get Google AdSense approval on the first submission for this Vite website.
+
+Perform a complete AdSense readiness audit and IMPLEMENT all required changes directly in the codebase.
+
+Requirements:
+
+1. AdSense Policy Compliance
+- Verify the site complies with current Google AdSense policies.
+- Remove or fix anything that could cause rejection.
+- Check for thin content, duplicate content, placeholder content, lorem ipsum, empty pages, broken links, fake testimonials, fake statistics, or misleading claims.
+- Ensure every page provides real value.
+
+2. Required Legal Pages
+Create professional pages and routes for:
+- Privacy Policy
+- Terms & Conditions
+- Disclaimer
+- Cookie Policy
+- Contact Us
+- About Us
+
+Requirements:
+- Fully written content.
+- Internal links between pages.
+- Mobile friendly.
+- SEO optimized.
+- Add them to sitemap.xml.
+
+3. Contact Page
+Create a complete Contact page including:
+- Contact form
+- Business email placeholder
+- Response policy
+- Privacy notice
+
+4. About Page
+Create a detailed About page explaining:
+- What the website does
+- Who it helps
+- How screenshots are edited
+- Why the site exists
+- Trust signals
+
+5. Content Quality Audit
+Analyze every route and page.
+
+For any page that contains:
+- Less than 500 words
+- Thin content
+- Mostly UI with little explanation
+
+Expand it with:
+- Educational content
+- FAQs
+- Step-by-step guides
+- Use cases
+- Best practices
+- Benefits
+- Troubleshooting
+
+Target:
+- Important pages: 800–1500+ words
+- Blog-style pages: 1000–2000+ words
+
+6. Homepage Improvements
+Add:
+- Clear value proposition
+- Feature sections
+- Benefits section
+- FAQ section
+- Trust section
+- Internal links
+
+Homepage should look like a legitimate business website, not a demo app.
+
+7. SEO Improvements
+Implement:
+- Unique title tags
+- Meta descriptions
+- Canonical URLs
+- Open Graph tags
+- Twitter cards
+- Structured data JSON-LD
+
+Add schema where appropriate:
+- Organization
+- WebSite
+- FAQPage
+- BreadcrumbList
+
+8. Navigation & Footer
+Create a professional footer containing:
+- About
+- Contact
+- Privacy Policy
+- Terms
+- Cookie Policy
+- Disclaimer
+- Sitemap
+
+Ensure every page is reachable within 3 clicks.
+
+9. Technical AdSense Readiness
+Verify:
+- robots.txt exists
+- sitemap.xml exists
+- Noindex not present
+- No broken routes
+- No console errors
+- Mobile responsive
+- Fast loading
+- Accessibility improvements
+
+10. Trust & E-E-A-T Signals
+Add:
+- Author/company information
+- Site mission
+- Contact information
+- FAQ section
+- Transparent policies
+
+11. AdSense Preparation
+Create:
+- ads.txt in public root
+
+Use placeholder content:
+
+google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+
+Add instructions in comments showing where the real publisher ID goes.
+
+12. Final Audit Report
+After changes are complete, generate a report:
+
+PASS / FAIL for:
+- AdSense readiness
+- SEO readiness
+- Trust signals
+- Legal compliance
+- Technical compliance
+
+List every issue fixed.
+List any remaining risks that could still affect approval.
+
+Important:
+Do not just suggest changes.
+Actually modify the codebase and create any missing pages, routes, components, metadata, schema markup, sitemap entries, robots.txt entries, ads.txt, footer links, and SEO tags needed for AdSense approval.

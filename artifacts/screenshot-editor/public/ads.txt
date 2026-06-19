@@ -1,0 +1,14 @@
+# ads.txt — FlowNote (https://useflownote.online)
+# ─────────────────────────────────────────────────────────────────────────────
+# This file authorizes ad networks to serve ads on this domain.
+#
+# IMPORTANT: Replace the placeholder publisher ID below with your real
+# Google AdSense publisher ID before submitting for AdSense review.
+#
+# Your publisher ID looks like: pub-1234567890123456
+# Find it at: https://www.google.com/adsense → Account → Account information
+#
+# Format: <ad network domain>, <publisher ID>, <account type>, <certificate authority ID>
+# ─────────────────────────────────────────────────────────────────────────────
+
+google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0

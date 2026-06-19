@@ -16,6 +16,12 @@ import GreenshotAlternative from "@/pages/seo/GreenshotAlternative";
 import MarkupHeroAlternative from "@/pages/seo/MarkupHeroAlternative";
 import CleanshotAlternative from "@/pages/seo/CleanshotAlternative";
 import DynamicSEOPage from "@/pages/seo/DynamicSEOPage";
+import PrivacyPolicy from "@/pages/legal/PrivacyPolicy";
+import TermsOfService from "@/pages/legal/TermsOfService";
+import Disclaimer from "@/pages/legal/Disclaimer";
+import CookiePolicy from "@/pages/legal/CookiePolicy";
+import ContactPage from "@/pages/legal/ContactPage";
+import AboutPage from "@/pages/legal/AboutPage";
 
 const queryClient = new QueryClient();
 
@@ -23,20 +29,27 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={EditorPage} />
-      {/* Core editorial pages — hand-crafted deep content */}
+      {/* ── Legal & informational pages ── */}
+      <Route path="/about" component={AboutPage} />
+      <Route path="/contact" component={ContactPage} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/terms-of-service" component={TermsOfService} />
+      <Route path="/cookie-policy" component={CookiePolicy} />
+      <Route path="/disclaimer" component={Disclaimer} />
+      {/* ── Core editorial pages — hand-crafted deep content ── */}
       <Route path="/free-screenshot-editor-online" component={FreeScreenshotEditor} />
       <Route path="/annotate-screenshot-online" component={AnnotateScreenshot} />
       <Route path="/blur-screenshot-online" component={BlurScreenshot} />
       <Route path="/screenshot-editor-no-signup" component={NoSignupEditor} />
       <Route path="/ai-screenshot-editor" component={AiScreenshotEditor} />
       <Route path="/add-text-to-screenshot-online" component={AddTextToScreenshot} />
-      {/* Comparison pages — dedicated with full comparison tables */}
+      {/* ── Comparison pages — dedicated with full comparison tables ── */}
       <Route path="/snagit-alternative" component={SnagitAlternative} />
       <Route path="/lightshot-alternative" component={LightshotAlternative} />
       <Route path="/greenshot-alternative" component={GreenshotAlternative} />
       <Route path="/markup-hero-alternative" component={MarkupHeroAlternative} />
       <Route path="/cleanshot-alternative" component={CleanshotAlternative} />
-      {/* Dynamic catch-all for all remaining SEO pages */}
+      {/* ── Dynamic catch-all for all remaining SEO pages ── */}
       <Route path="/:slug" component={DynamicSEOPage} />
       <Route component={NotFound} />
     </Switch>
