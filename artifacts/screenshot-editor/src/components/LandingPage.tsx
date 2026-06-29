@@ -4,7 +4,8 @@ import {
   Wand2, Type, Pipette,
   ScanSearch, Download, Eraser, ChevronDown,
   Sparkles, Zap, Shield, ArrowRight, UploadCloud,
-  Layers, Brain, Palette,
+  Layers, Brain, Palette, Menu, X,
+  MousePointer, Crop, PenTool, Square, Slash,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -14,15 +15,27 @@ interface Props {
 
 const FAQ = [
   {
-    q: 'What image formats are supported?',
+    q: 'Is my screenshot stored anywhere?',
+    a: 'No. FlowNote processes everything entirely inside your browser using the HTML5 Canvas API. Your screenshot is never uploaded to any server — it never leaves your device. There is no database, no cloud storage, and no third party that can access your images.',
+  },
+  {
+    q: 'What file formats are supported?',
     a: 'FlowNote accepts JPG, PNG, WEBP, and GIF files. You can export your edited screenshot as JPG, PNG, or WEBP.',
   },
   {
-    q: 'Are my screenshots uploaded to a server?',
-    a: 'No. Everything happens entirely in your browser. Your screenshots never leave your device — no uploads, no accounts, no storage.',
+    q: 'Is this free to use?',
+    a: 'Yes, FlowNote is completely free. There is no subscription, no premium tier, no watermark, and no sign-up required. All features are available to every visitor with no limitations.',
   },
   {
-    q: "How do I remove text that's already in my screenshot?",
+    q: 'Can I use FlowNote on mobile?',
+    a: 'Yes. FlowNote is fully responsive and works on smartphones and tablets. You can open a screenshot from your camera roll, edit it directly in your mobile browser, and download the result — no app installation needed.',
+  },
+  {
+    q: 'Is there a file size limit?',
+    a: 'FlowNote has no enforced file size limit. Very large images (above 20 MB or larger than 8000×8000 pixels) may be slow to process depending on your device\'s RAM and browser capabilities. For best performance, images under 10 MB work smoothly on all devices.',
+  },
+  {
+    q: 'How do I remove text that\'s already in my screenshot?',
     a: 'Open the Retouch tab. Use the Eyedropper to sample your background colour, then activate the Paint Brush and paint over the text. It fills with the exact colour you sampled. Use Undo if needed.',
   },
   {
@@ -32,10 +45,6 @@ const FAQ = [
   {
     q: 'Can I add multiple text layers?',
     a: 'Yes. Click "Add Text" as many times as you like. Each layer can have its own font, size, colour, opacity, and position. Drag layers freely on the canvas.',
-  },
-  {
-    q: 'Can I pick a colour from the image for my text?',
-    a: 'Yes. Select a text layer, then click "Pick from image" in the Color section. Your cursor becomes a crosshair — click anywhere on the screenshot to sample that exact colour.',
   },
   {
     q: 'Does FlowNote work offline?',
@@ -76,6 +85,17 @@ const FEATURES = [
   },
 ];
 
+const EDITING_TOOLS = [
+  { icon: <Square className="w-4 h-4" />, name: 'Annotate', desc: 'Draw boxes, circles, and callout shapes to highlight areas of interest.' },
+  { icon: <Slash className="w-4 h-4" />, name: 'Arrows', desc: 'Add directional arrows to point at specific elements in your screenshot.' },
+  { icon: <Type className="w-4 h-4" />, name: 'Text Overlay', desc: 'Place styled text anywhere — 21 fonts, 18 templates, full colour control.' },
+  { icon: <Wand2 className="w-4 h-4" />, name: 'Blur / Redact', desc: 'Blur or paint over sensitive data like names, emails, or passwords.' },
+  { icon: <Crop className="w-4 h-4" />, name: 'Crop & Resize', desc: 'Crop to any region and resize to standard or custom dimensions for export.' },
+  { icon: <Palette className="w-4 h-4" />, name: 'Filters & Adjustments', desc: 'Brightness, contrast, saturation, hue, and one-click filter presets.' },
+  { icon: <Pipette className="w-4 h-4" />, name: 'Color Eyedropper', desc: 'Sample any pixel colour from your image for perfect matching.' },
+  { icon: <Eraser className="w-4 h-4" />, name: 'Smart Retouch', desc: 'Paint over unwanted content with a background-matched fill brush.' },
+];
+
 const STATS = [
   { value: '21', label: 'Fonts' },
   { value: '18', label: 'Templates' },
@@ -114,12 +134,16 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 export function LandingPage({ onFileSelected }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const featuresRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
+  const aboutRef = useRef<HTMLDivElement>(null);
 
-  const scrollTo = (ref: React.RefObject<HTMLDivElement | null>) =>
+  const scrollTo = (ref: React.RefObject<HTMLDivElement | null>) => {
+    setMobileMenuOpen(false);
     ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const handleFileDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -134,8 +158,13 @@ export function LandingPage({ onFileSelected }: Props) {
   }, [onFileSelected]);
 
   const NAV_LINKS = [
+    { label: 'Home', onClick: () => { setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); } },
     { label: 'Features', onClick: () => scrollTo(featuresRef) },
+    { label: 'About', href: '/about' },
     { label: 'FAQ', onClick: () => scrollTo(faqRef) },
+    { label: 'Contact', href: '/contact' },
+    { label: 'Privacy', href: '/privacy-policy' },
+    { label: 'Terms', href: '/terms-of-service' },
   ];
 
   return (
@@ -147,27 +176,79 @@ export function LandingPage({ onFileSelected }: Props) {
       {/* ── Sticky nav ── */}
       <nav className="sticky top-0 z-50 fn-glass border-b border-black/[0.06]">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5 font-bold text-xl tracking-tight">
+          <a href="/" className="flex items-center gap-2.5 font-bold text-xl tracking-tight hover:opacity-80 transition-opacity">
             <div className="w-8 h-8 rounded-lg fn-gradient-bg flex items-center justify-center">
               <Layers className="w-4 h-4 text-white" />
             </div>
             <span className="fn-gradient-text">FlowNote</span>
-          </div>
-          <div className="hidden md:flex items-center gap-8">
+          </a>
+
+          {/* Desktop nav */}
+          <div className="hidden lg:flex items-center gap-6">
             {NAV_LINKS.map(l => (
-              <button key={l.label} onClick={l.onClick}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                {l.label}
-              </button>
+              l.href ? (
+                <a key={l.label} href={l.href}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  {l.label}
+                </a>
+              ) : (
+                <button key={l.label} onClick={l.onClick}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  {l.label}
+                </button>
+              )
             ))}
           </div>
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="fn-gradient-bg text-white text-sm font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg"
-            style={{ boxShadow: '0 4px 20px rgba(79,70,229,0.4)' }}>
-            <UploadCloud className="w-4 h-4" /> Open Screenshot
-          </button>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="fn-gradient-bg text-white text-sm font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+              style={{ boxShadow: '0 4px 20px rgba(79,70,229,0.4)' }}>
+              <UploadCloud className="w-4 h-4" />
+              <span className="hidden sm:inline">Open Screenshot</span>
+              <span className="sm:hidden">Open</span>
+            </button>
+
+            {/* Mobile hamburger */}
+            <button
+              className="lg:hidden p-2 rounded-lg hover:bg-black/[0.06] transition-colors"
+              onClick={() => setMobileMenuOpen(o => !o)}
+              aria-label="Toggle menu">
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="lg:hidden overflow-hidden border-t border-black/[0.06]"
+              style={{ background: 'rgba(248,249,252,0.98)', backdropFilter: 'blur(20px)' }}>
+              <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col gap-1">
+                {NAV_LINKS.map(l => (
+                  l.href ? (
+                    <a key={l.label} href={l.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2.5 border-b border-black/[0.05] last:border-0">
+                      {l.label}
+                    </a>
+                  ) : (
+                    <button key={l.label} onClick={l.onClick}
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2.5 border-b border-black/[0.05] last:border-0 text-left">
+                      {l.label}
+                    </button>
+                  )
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* ── Hero ── */}
@@ -263,7 +344,7 @@ export function LandingPage({ onFileSelected }: Props) {
       </section>
 
       {/* ── Features ── */}
-      <section ref={featuresRef} className="py-28 px-6 relative overflow-hidden"
+      <section ref={featuresRef} id="features" className="py-28 px-6 relative overflow-hidden"
         style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] opacity-10"
@@ -306,6 +387,137 @@ export function LandingPage({ onFileSelected }: Props) {
               </motion.div>
             ))}
           </div>
+
+          {/* Editing tools quick list */}
+          <div className="mt-16">
+            <h3 className="text-xl font-bold text-center text-foreground mb-8">
+              All editing tools at a glance
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {EDITING_TOOLS.map((t, i) => (
+                <motion.div key={t.name}
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05, duration: 0.35 }}
+                  className="rounded-xl p-4 flex gap-3 items-start"
+                  style={{ background: 'rgba(79,70,229,0.05)', border: '1px solid rgba(79,70,229,0.12)' }}>
+                  <div className="w-7 h-7 rounded-lg fn-gradient-bg flex items-center justify-center shrink-0 text-white mt-0.5"
+                    style={{ boxShadow: '0 2px 8px rgba(79,70,229,0.3)' }}>
+                    {t.icon}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground mb-0.5">{t.name}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{t.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── About / How it works ── */}
+      <section ref={aboutRef} id="about" className="py-28 px-6 relative"
+        style={{ borderTop: '1px solid rgba(0,0,0,0.06)', background: 'rgba(248,249,252,0.5)' }}>
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}>
+            <div className="text-center mb-14 space-y-4">
+              <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium"
+                style={{ background: 'rgba(79,70,229,0.15)', border: '1px solid rgba(79,70,229,0.3)', color: '#a5b4fc' }}>
+                <MousePointer className="w-3.5 h-3.5" /> How it works
+              </div>
+              <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+                What is <span className="fn-gradient-text">FlowNote</span>?
+              </h2>
+            </div>
+
+            {/* Written description */}
+            <div className="prose prose-neutral max-w-none mb-14 space-y-4 text-muted-foreground leading-relaxed text-base">
+              <p>
+                FlowNote is a free, professional-grade screenshot editor that runs entirely inside your web browser.
+                It is designed for anyone who needs to quickly annotate, redact, or polish a screenshot —
+                developers filing bug reports, designers sharing feedback, writers creating tutorials, support agents
+                clarifying issues, or anyone who just wants to draw an arrow on an image without installing a desktop application.
+              </p>
+              <p>
+                Unlike most online image editors, FlowNote never uploads your screenshots to a server.
+                Every operation — adjustments, text layers, blur, retouch, export — happens locally on your device
+                using the browser's built-in HTML5 Canvas API. This means your images stay completely private,
+                the editor works offline once loaded, and there are no file size quotas enforced by a remote server.
+              </p>
+              <p>
+                FlowNote is built around a simple belief: powerful creative tools should be accessible to everyone,
+                without subscriptions, without accounts, and without compromising your privacy. It is free forever,
+                works on any operating system with a modern browser, and requires zero setup. Drop your screenshot in,
+                edit it, download it — that's the entire workflow.
+              </p>
+            </div>
+
+            {/* Step-by-step instructions */}
+            <div className="mb-10">
+              <h3 className="text-2xl font-bold text-foreground mb-8 text-center">How to use FlowNote — step by step</h3>
+              <div className="space-y-4">
+                {[
+                  {
+                    step: '1',
+                    title: 'Open your screenshot',
+                    desc: 'Click the "Open Screenshot" button in the top-right corner, or drag and drop an image file directly onto the upload zone. FlowNote accepts JPG, PNG, WEBP, and GIF files. Your image is loaded directly into the browser — nothing is sent to a server.',
+                  },
+                  {
+                    step: '2',
+                    title: 'Choose your editing tools',
+                    desc: 'Once your screenshot loads, you will see the editing sidebar on the right. Select from five tabs: Adjust (brightness, contrast, filters), Annotate (shapes, arrows), Text (add styled text layers), Retouch (blur or paint over sensitive content), and Export (resize and download).',
+                  },
+                  {
+                    step: '3',
+                    title: 'Annotate and mark up',
+                    desc: 'Use the Annotate tab to draw boxes, circles, or arrows on your screenshot. Click and drag on the canvas to create shapes. Change colours, stroke widths, and fill settings in the sidebar. Use the Text tab to add labels, callouts, or numbered steps.',
+                  },
+                  {
+                    step: '4',
+                    title: 'Blur or redact sensitive data',
+                    desc: 'Switch to the Retouch tab to hide private information. Use the Eyedropper to sample a background colour, then paint over any text, names, emails, or passwords you want to remove. The Smart Fill brush blends seamlessly with the surrounding area.',
+                  },
+                  {
+                    step: '5',
+                    title: 'Download your edited screenshot',
+                    desc: 'When you are satisfied, click the "Download" button at the top of the page. Choose your format (JPG, PNG, or WEBP), optionally resize to a preset (Instagram, Twitter, HD) or enter custom pixel dimensions, then save the file to your device.',
+                  },
+                ].map((item, i) => (
+                  <motion.div key={item.step}
+                    initial={{ opacity: 0, x: -12 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.08, duration: 0.4 }}
+                    className="flex gap-5 rounded-2xl p-6"
+                    style={{ background: 'rgba(255,255,255,0.9)', border: '1px solid rgba(0,0,0,0.07)' }}>
+                    <div className="w-9 h-9 rounded-xl fn-gradient-bg flex items-center justify-center shrink-0 text-white font-bold text-sm"
+                      style={{ boxShadow: '0 4px 14px rgba(79,70,229,0.35)' }}>
+                      {item.step}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground mb-1.5">{item.title}</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            <div className="text-center">
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="fn-gradient-bg text-white font-semibold px-8 py-3.5 rounded-xl flex items-center gap-2 hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98] mx-auto"
+                style={{ boxShadow: '0 4px 20px rgba(79,70,229,0.4)' }}>
+                <UploadCloud className="w-5 h-5" /> Start Editing Now — It's Free
+              </button>
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -332,6 +544,7 @@ export function LandingPage({ onFileSelected }: Props) {
               <p className="text-muted-foreground text-sm leading-relaxed">
                 FlowNote runs entirely in your browser using the Canvas API. No files are uploaded to any server.
                 No analytics. No tracking. Your screenshots stay private — always.
+                <a href="/privacy-policy" className="ml-1 text-indigo-500 hover:underline">Read our Privacy Policy →</a>
               </p>
             </div>
             <button
@@ -345,7 +558,7 @@ export function LandingPage({ onFileSelected }: Props) {
       </section>
 
       {/* ── FAQ ── */}
-      <section ref={faqRef} className="py-28 px-6 relative overflow-hidden"
+      <section ref={faqRef} id="faq" className="py-28 px-6 relative overflow-hidden"
         style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[200px] opacity-10"
@@ -381,7 +594,7 @@ export function LandingPage({ onFileSelected }: Props) {
               <p className="text-xs" style={{ color: '#a5b4fc' }}>Capture. Organize. Flow.</p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-12 gap-y-4 text-sm">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-12 gap-y-4 text-sm">
               <div className="space-y-2">
                 <p className="font-semibold text-xs uppercase tracking-wider text-muted-foreground mb-3">Product</p>
                 <button onClick={() => scrollTo(featuresRef)} className="block text-muted-foreground hover:text-foreground transition-colors">Features</button>
@@ -423,6 +636,12 @@ export function LandingPage({ onFileSelected }: Props) {
           <div className="mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground"
             style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
             <p>© {new Date().getFullYear()} FlowNote. All rights reserved.</p>
+            <div className="flex flex-wrap justify-center gap-4 text-xs">
+              <a href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</a>
+              <a href="/terms-of-service" className="hover:text-foreground transition-colors">Terms of Service</a>
+              <a href="/about" className="hover:text-foreground transition-colors">About</a>
+              <a href="/contact" className="hover:text-foreground transition-colors">Contact</a>
+            </div>
             <p className="text-xs">Built with React · Runs 100% in your browser · No data collected</p>
           </div>
         </div>
