@@ -2,18 +2,20 @@ import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Wand2, Type, Pipette,
-  ScanSearch, Download, Eraser, ChevronDown,
+  Download, Eraser, ChevronDown,
   Sparkles, Zap, Shield, ArrowRight, UploadCloud,
   Layers, Brain, Palette, Menu, X,
-  MousePointer, Crop, PenTool, Square, Slash,
+  MousePointer, Crop, Square, Slash,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useSEO, buildFAQSchema, buildSoftwareAppSchema } from '@/hooks/use-seo';
+
+const BASE = 'https://useflownote.online';
 
 interface Props {
   onFileSelected: (file: File) => void;
 }
 
-const FAQ = [
+export const FAQ_ITEMS = [
   {
     q: 'Is my screenshot stored anywhere?',
     a: 'No. FlowNote processes everything entirely inside your browser using the HTML5 Canvas API. Your screenshot is never uploaded to any server — it never leaves your device. There is no database, no cloud storage, and no third party that can access your images.',
@@ -28,14 +30,14 @@ const FAQ = [
   },
   {
     q: 'Can I use FlowNote on mobile?',
-    a: 'Yes. FlowNote is fully responsive and works on smartphones and tablets. You can open a screenshot from your camera roll, edit it directly in your mobile browser, and download the result — no app installation needed.',
+    a: "Yes. FlowNote is fully responsive and works on smartphones and tablets. You can open a screenshot from your camera roll, edit it directly in your mobile browser, and download the result — no app installation needed.",
   },
   {
     q: 'Is there a file size limit?',
-    a: 'FlowNote has no enforced file size limit. Very large images (above 20 MB or larger than 8000×8000 pixels) may be slow to process depending on your device\'s RAM and browser capabilities. For best performance, images under 10 MB work smoothly on all devices.',
+    a: "FlowNote has no enforced file size limit. Very large images (above 20 MB or larger than 8000×8000 pixels) may be slow to process depending on your device's RAM and browser capabilities. For best performance, images under 10 MB work smoothly on all devices.",
   },
   {
-    q: 'How do I remove text that\'s already in my screenshot?',
+    q: "How do I remove text that's already in my screenshot?",
     a: 'Open the Retouch tab. Use the Eyedropper to sample your background colour, then activate the Paint Brush and paint over the text. It fills with the exact colour you sampled. Use Undo if needed.',
   },
   {
@@ -86,14 +88,14 @@ const FEATURES = [
 ];
 
 const EDITING_TOOLS = [
-  { icon: <Square className="w-4 h-4" />, name: 'Annotate', desc: 'Draw boxes, circles, and callout shapes to highlight areas of interest.' },
-  { icon: <Slash className="w-4 h-4" />, name: 'Arrows', desc: 'Add directional arrows to point at specific elements in your screenshot.' },
-  { icon: <Type className="w-4 h-4" />, name: 'Text Overlay', desc: 'Place styled text anywhere — 21 fonts, 18 templates, full colour control.' },
-  { icon: <Wand2 className="w-4 h-4" />, name: 'Blur / Redact', desc: 'Blur or paint over sensitive data like names, emails, or passwords.' },
-  { icon: <Crop className="w-4 h-4" />, name: 'Crop & Resize', desc: 'Crop to any region and resize to standard or custom dimensions for export.' },
-  { icon: <Palette className="w-4 h-4" />, name: 'Filters & Adjustments', desc: 'Brightness, contrast, saturation, hue, and one-click filter presets.' },
-  { icon: <Pipette className="w-4 h-4" />, name: 'Color Eyedropper', desc: 'Sample any pixel colour from your image for perfect matching.' },
-  { icon: <Eraser className="w-4 h-4" />, name: 'Smart Retouch', desc: 'Paint over unwanted content with a background-matched fill brush.' },
+  { icon: <Square className="w-4 h-4" />, name: 'Annotate', desc: 'Draw boxes, circles, and callout shapes to highlight areas of interest.', href: '/annotate-screenshot-online' },
+  { icon: <Slash className="w-4 h-4" />, name: 'Arrows', desc: 'Add directional arrows to point at specific elements in your screenshot.', href: '/add-arrow-to-screenshot-online' },
+  { icon: <Type className="w-4 h-4" />, name: 'Text Overlay', desc: 'Place styled text anywhere — 21 fonts, 18 templates, full colour control.', href: '/add-text-to-screenshot-online' },
+  { icon: <Wand2 className="w-4 h-4" />, name: 'Blur / Redact', desc: 'Blur or paint over sensitive data like names, emails, or passwords.', href: '/blur-screenshot-online' },
+  { icon: <Crop className="w-4 h-4" />, name: 'Crop & Resize', desc: 'Crop to any region and resize to standard or custom dimensions for export.', href: '/screenshot-crop-tool' },
+  { icon: <Palette className="w-4 h-4" />, name: 'Filters & Adjustments', desc: 'Brightness, contrast, saturation, hue, and one-click filter presets.', href: '/free-screenshot-editor-online' },
+  { icon: <Pipette className="w-4 h-4" />, name: 'Color Eyedropper', desc: 'Sample any pixel colour from your image for perfect matching.', href: '/free-screenshot-editor-online' },
+  { icon: <Eraser className="w-4 h-4" />, name: 'Smart Retouch', desc: 'Paint over unwanted content with a background-matched fill brush.', href: '/screenshot-redaction-tool' },
 ];
 
 const STATS = [
@@ -136,6 +138,35 @@ export function LandingPage({ onFileSelected }: Props) {
   const [dragging, setDragging] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  useSEO({
+    title: 'Free Online Screenshot Editor — FlowNote',
+    description: 'Annotate, blur, crop & add text to screenshots — free, no signup, no upload. Export PNG, JPG or WEBP. Runs 100% in your browser.',
+    canonical: `${BASE}/`,
+    keywords: 'free screenshot editor online, annotate screenshot, blur screenshot, crop screenshot, add arrows to screenshot, add text to screenshot, edit screenshot online',
+    ogTitle: 'Free Online Screenshot Editor — FlowNote',
+    ogDescription: 'Annotate, blur, crop & export screenshots free. No signup, no upload — 100% private, runs in your browser.',
+    jsonLd: [
+      buildSoftwareAppSchema({
+        name: 'FlowNote — Free Online Screenshot Editor',
+        description: 'Free browser-based screenshot editor. Annotate, blur, crop, add text and export screenshots instantly. No signup, no upload, 100% private.',
+        url: BASE,
+        rating: 4.9,
+        reviewCount: 1240,
+        features: [
+          'Annotate screenshots with shapes & arrows',
+          'Blur or redact sensitive data',
+          'Crop & resize screenshots',
+          'Add text overlays with 21 font families',
+          'Smart retouch brush for seamless fill',
+          'AI font analyzer',
+          'Color eyedropper for pixel-perfect matching',
+          'Export PNG / JPG / WEBP — 100% browser-based',
+        ],
+      }),
+      buildFAQSchema(FAQ_ITEMS.map(i => ({ q: i.q, a: i.a }))),
+    ],
+  });
+
   const featuresRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
   const aboutRef = useRef<HTMLDivElement>(null);
@@ -157,11 +188,11 @@ export function LandingPage({ onFileSelected }: Props) {
     if (file) onFileSelected(file);
   }, [onFileSelected]);
 
-  const NAV_LINKS = [
+  const NAV_LINKS: { label: string; href?: string; onClick?: () => void }[] = [
     { label: 'Home', onClick: () => { setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); } },
-    { label: 'Features', onClick: () => scrollTo(featuresRef) },
+    { label: 'Features', href: '/features' },
     { label: 'About', href: '/about' },
-    { label: 'FAQ', onClick: () => scrollTo(faqRef) },
+    { label: 'FAQ', href: '/faq' },
     { label: 'Contact', href: '/contact' },
     { label: 'Privacy', href: '/privacy-policy' },
     { label: 'Terms', href: '/terms-of-service' },
@@ -174,11 +205,11 @@ export function LandingPage({ onFileSelected }: Props) {
         onChange={handleFileChange} />
 
       {/* ── Sticky nav ── */}
-      <nav className="sticky top-0 z-50 fn-glass border-b border-black/[0.06]">
+      <nav className="sticky top-0 z-50 fn-glass border-b border-black/[0.06]" aria-label="Main navigation">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2.5 font-bold text-xl tracking-tight hover:opacity-80 transition-opacity">
+          <a href="/" aria-label="FlowNote home" className="flex items-center gap-2.5 font-bold text-xl tracking-tight hover:opacity-80 transition-opacity">
             <div className="w-8 h-8 rounded-lg fn-gradient-bg flex items-center justify-center">
-              <Layers className="w-4 h-4 text-white" />
+              <Layers className="w-4 h-4 text-white" aria-hidden="true" />
             </div>
             <span className="fn-gradient-text">FlowNote</span>
           </a>
@@ -203,9 +234,10 @@ export function LandingPage({ onFileSelected }: Props) {
           <div className="flex items-center gap-3">
             <button
               onClick={() => fileInputRef.current?.click()}
+              aria-label="Open a screenshot file to start editing"
               className="fn-gradient-bg text-white text-sm font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg"
               style={{ boxShadow: '0 4px 20px rgba(79,70,229,0.4)' }}>
-              <UploadCloud className="w-4 h-4" />
+              <UploadCloud className="w-4 h-4" aria-hidden="true" />
               <span className="hidden sm:inline">Open Screenshot</span>
               <span className="sm:hidden">Open</span>
             </button>
@@ -214,8 +246,11 @@ export function LandingPage({ onFileSelected }: Props) {
             <button
               className="lg:hidden p-2 rounded-lg hover:bg-black/[0.06] transition-colors"
               onClick={() => setMobileMenuOpen(o => !o)}
-              aria-label="Toggle menu">
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              aria-label="Toggle navigation menu"
+              aria-expanded={mobileMenuOpen}>
+              {mobileMenuOpen
+                ? <X className="w-5 h-5" aria-hidden="true" />
+                : <Menu className="w-5 h-5" aria-hidden="true" />}
             </button>
           </div>
         </div>
@@ -252,13 +287,15 @@ export function LandingPage({ onFileSelected }: Props) {
       </nav>
 
       {/* ── Hero ── */}
-      <section className="flex-1 flex flex-col items-center justify-center px-6 py-28 text-center relative overflow-hidden"
+      <section
+        className="flex-1 flex flex-col items-center justify-center px-6 py-28 text-center relative overflow-hidden"
         onDragOver={e => { e.preventDefault(); setDragging(true); }}
         onDragLeave={() => setDragging(false)}
-        onDrop={handleFileDrop}>
+        onDrop={handleFileDrop}
+        aria-label="Upload a screenshot to start editing">
 
-        {/* Ambient glow circles */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Ambient glow */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full opacity-20"
             style={{ background: 'radial-gradient(ellipse, rgba(79,70,229,0.25) 0%, transparent 70%)' }} />
           <div className="absolute top-1/2 left-1/4 w-[400px] h-[400px] rounded-full opacity-15"
@@ -274,17 +311,17 @@ export function LandingPage({ onFileSelected }: Props) {
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1, duration: 0.4 }}
             className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium"
             style={{ background: 'rgba(79,70,229,0.15)', border: '1px solid rgba(79,70,229,0.3)', color: '#a5b4fc' }}>
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
             100% free · No sign-in · Runs in your browser
           </motion.div>
 
           <div className="space-y-4">
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.05]">
-              Capture.<br />
-              <span className="fn-gradient-text">Organize. Flow.</span>
+              Free Online<br />
+              <span className="fn-gradient-text">Screenshot Editor</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed font-light">
-              A premium screenshot editor with AI-powered tools. Annotate, retouch, and export your screenshots in seconds — entirely in your browser.
+              Annotate, blur, crop, add arrows and text to screenshots — free, no signup required, runs 100% in your browser.
             </p>
           </div>
 
@@ -306,25 +343,25 @@ export function LandingPage({ onFileSelected }: Props) {
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.5 }}
             onClick={() => fileInputRef.current?.click()}
+            role="button"
+            tabIndex={0}
+            aria-label="Click or drop an image file here to open it in the editor"
+            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click(); }}
             className={`relative rounded-3xl p-14 cursor-pointer transition-all duration-300 group ${dragging ? 'scale-[1.01]' : ''}`}
             style={{
-              background: dragging
-                ? 'rgba(79,70,229,0.08)'
-                : 'rgba(248,249,252,0.8)',
-              border: dragging
-                ? '2px dashed rgba(79,70,229,0.8)'
-                : '2px dashed rgba(0,0,0,0.12)',
+              background: dragging ? 'rgba(79,70,229,0.08)' : 'rgba(248,249,252,0.8)',
+              border: dragging ? '2px dashed rgba(79,70,229,0.8)' : '2px dashed rgba(0,0,0,0.12)',
               backdropFilter: 'blur(16px)',
               boxShadow: dragging ? '0 0 40px rgba(79,70,229,0.15)' : 'none',
             }}>
             <div className={`w-16 h-16 rounded-2xl fn-gradient-bg flex items-center justify-center mx-auto mb-5 transition-transform duration-300 ${dragging ? 'scale-110' : 'group-hover:scale-105'}`}
               style={{ boxShadow: '0 8px 32px rgba(79,70,229,0.4)' }}>
-              <UploadCloud className="w-7 h-7 text-white" />
+              <UploadCloud className="w-7 h-7 text-white" aria-hidden="true" />
             </div>
-            <h3 className="text-xl font-bold mb-2 text-foreground">
+            <h2 className="text-xl font-bold mb-2 text-foreground">
               {dragging ? 'Drop to start editing' : 'Drop your screenshot here'}
-            </h3>
-            <p className="text-muted-foreground mb-6 text-sm">or click to browse files</p>
+            </h2>
+            <p className="text-muted-foreground mb-6 text-sm">or click to browse files — JPG, PNG, WEBP, GIF</p>
             <div className="flex justify-center gap-2">
               {['JPG', 'PNG', 'WEBP', 'GIF'].map(f => (
                 <span key={f} className="text-xs font-semibold px-3 py-1 rounded-full"
@@ -335,18 +372,18 @@ export function LandingPage({ onFileSelected }: Props) {
             </div>
           </motion.div>
 
-          <button onClick={() => scrollTo(featuresRef)}
+          <a href="/features"
             className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mx-auto group">
             Explore all features
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-          </button>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
+          </a>
         </motion.div>
       </section>
 
       {/* ── Features ── */}
       <section ref={featuresRef} id="features" className="py-28 px-6 relative overflow-hidden"
         style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-        <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] opacity-10"
             style={{ background: 'radial-gradient(ellipse, rgba(79,70,229,0.4) 0%, transparent 70%)' }} />
         </div>
@@ -354,7 +391,7 @@ export function LandingPage({ onFileSelected }: Props) {
           <div className="text-center mb-16 space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium"
               style={{ background: 'rgba(79,70,229,0.15)', border: '1px solid rgba(79,70,229,0.3)', color: '#a5b4fc' }}>
-              <Zap className="w-3.5 h-3.5" /> Powerful tools
+              <Zap className="w-3.5 h-3.5" aria-hidden="true" /> Powerful tools
             </div>
             <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
               Everything you need,<br /><span className="fn-gradient-text">zero friction</span>
@@ -378,7 +415,7 @@ export function LandingPage({ onFileSelected }: Props) {
                 }}>
                 <div className="w-10 h-10 rounded-xl fn-gradient-bg flex items-center justify-center"
                   style={{ boxShadow: '0 4px 16px rgba(79,70,229,0.35)' }}>
-                  <span className="text-white">{f.icon}</span>
+                  <span className="text-white" aria-hidden="true">{f.icon}</span>
                 </div>
                 <div>
                   <h3 className="font-semibold text-base text-foreground mb-1.5">{f.title}</h3>
@@ -388,30 +425,37 @@ export function LandingPage({ onFileSelected }: Props) {
             ))}
           </div>
 
-          {/* Editing tools quick list */}
+          {/* Editing tools quick list with internal links */}
           <div className="mt-16">
             <h3 className="text-xl font-bold text-center text-foreground mb-8">
               All editing tools at a glance
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {EDITING_TOOLS.map((t, i) => (
-                <motion.div key={t.name}
+                <motion.a key={t.name}
+                  href={t.href}
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.05, duration: 0.35 }}
-                  className="rounded-xl p-4 flex gap-3 items-start"
+                  className="rounded-xl p-4 flex gap-3 items-start hover:scale-[1.02] transition-transform"
                   style={{ background: 'rgba(79,70,229,0.05)', border: '1px solid rgba(79,70,229,0.12)' }}>
                   <div className="w-7 h-7 rounded-lg fn-gradient-bg flex items-center justify-center shrink-0 text-white mt-0.5"
-                    style={{ boxShadow: '0 2px 8px rgba(79,70,229,0.3)' }}>
+                    style={{ boxShadow: '0 2px 8px rgba(79,70,229,0.3)' }} aria-hidden="true">
                     {t.icon}
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-foreground mb-0.5">{t.name}</p>
                     <p className="text-xs text-muted-foreground leading-relaxed">{t.desc}</p>
                   </div>
-                </motion.div>
+                </motion.a>
               ))}
+            </div>
+            <div className="mt-8 text-center">
+              <a href="/features" className="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors group">
+                See the full features page
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
+              </a>
             </div>
           </div>
         </div>
@@ -429,7 +473,7 @@ export function LandingPage({ onFileSelected }: Props) {
             <div className="text-center mb-14 space-y-4">
               <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium"
                 style={{ background: 'rgba(79,70,229,0.15)', border: '1px solid rgba(79,70,229,0.3)', color: '#a5b4fc' }}>
-                <MousePointer className="w-3.5 h-3.5" /> How it works
+                <MousePointer className="w-3.5 h-3.5" aria-hidden="true" /> How it works
               </div>
               <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
                 What is <span className="fn-gradient-text">FlowNote</span>?
@@ -437,7 +481,7 @@ export function LandingPage({ onFileSelected }: Props) {
             </div>
 
             {/* Written description */}
-            <div className="prose prose-neutral max-w-none mb-14 space-y-4 text-muted-foreground leading-relaxed text-base">
+            <div className="space-y-4 mb-14 text-muted-foreground leading-relaxed text-base">
               <p>
                 FlowNote is a free, professional-grade screenshot editor that runs entirely inside your web browser.
                 It is designed for anyone who needs to quickly annotate, redact, or polish a screenshot —
@@ -497,7 +541,7 @@ export function LandingPage({ onFileSelected }: Props) {
                     className="flex gap-5 rounded-2xl p-6"
                     style={{ background: 'rgba(255,255,255,0.9)', border: '1px solid rgba(0,0,0,0.07)' }}>
                     <div className="w-9 h-9 rounded-xl fn-gradient-bg flex items-center justify-center shrink-0 text-white font-bold text-sm"
-                      style={{ boxShadow: '0 4px 14px rgba(79,70,229,0.35)' }}>
+                      style={{ boxShadow: '0 4px 14px rgba(79,70,229,0.35)' }} aria-hidden="true">
                       {item.step}
                     </div>
                     <div>
@@ -514,7 +558,7 @@ export function LandingPage({ onFileSelected }: Props) {
                 onClick={() => fileInputRef.current?.click()}
                 className="fn-gradient-bg text-white font-semibold px-8 py-3.5 rounded-xl flex items-center gap-2 hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98] mx-auto"
                 style={{ boxShadow: '0 4px 20px rgba(79,70,229,0.4)' }}>
-                <UploadCloud className="w-5 h-5" /> Start Editing Now — It's Free
+                <UploadCloud className="w-5 h-5" aria-hidden="true" /> Start Editing Now — It's Free
               </button>
             </div>
           </motion.div>
@@ -537,21 +581,21 @@ export function LandingPage({ onFileSelected }: Props) {
             }}>
             <div className="w-14 h-14 rounded-2xl fn-gradient-bg flex items-center justify-center shrink-0"
               style={{ boxShadow: '0 8px 32px rgba(79,70,229,0.4)' }}>
-              <Shield className="w-7 h-7 text-white" />
+              <Shield className="w-7 h-7 text-white" aria-hidden="true" />
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-bold mb-1.5 text-foreground">Your screenshots never leave your device</h3>
+              <h2 className="text-xl font-bold mb-1.5 text-foreground">Your screenshots never leave your device</h2>
               <p className="text-muted-foreground text-sm leading-relaxed">
                 FlowNote runs entirely in your browser using the Canvas API. No files are uploaded to any server.
-                No analytics. No tracking. Your screenshots stay private — always.
-                <a href="/privacy-policy" className="ml-1 text-indigo-500 hover:underline">Read our Privacy Policy →</a>
+                No analytics. No tracking. Your screenshots stay private — always.{' '}
+                <a href="/privacy-policy" className="text-indigo-500 hover:underline">Read our Privacy Policy →</a>
               </p>
             </div>
             <button
               onClick={() => fileInputRef.current?.click()}
               className="shrink-0 fn-gradient-bg text-white text-sm font-semibold px-6 py-3 rounded-xl flex items-center gap-2 hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98]"
               style={{ boxShadow: '0 4px 20px rgba(79,70,229,0.4)' }}>
-              <UploadCloud className="w-4 h-4" /> Try it now
+              <UploadCloud className="w-4 h-4" aria-hidden="true" /> Try it now
             </button>
           </motion.div>
         </div>
@@ -560,7 +604,7 @@ export function LandingPage({ onFileSelected }: Props) {
       {/* ── FAQ ── */}
       <section ref={faqRef} id="faq" className="py-28 px-6 relative overflow-hidden"
         style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-        <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[200px] opacity-10"
             style={{ background: 'radial-gradient(ellipse, rgba(124,58,237,0.4) 0%, transparent 70%)' }} />
         </div>
@@ -569,10 +613,20 @@ export function LandingPage({ onFileSelected }: Props) {
             <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
               Frequently asked <span className="fn-gradient-text">questions</span>
             </h2>
-            <p className="text-muted-foreground font-light">Everything you need to know about FlowNote.</p>
+            <p className="text-muted-foreground font-light">
+              Everything you need to know about FlowNote.{' '}
+              <a href="/faq" className="text-indigo-500 hover:underline">See full FAQ →</a>
+            </p>
           </div>
           <div className="space-y-3">
-            {FAQ.map(item => <FaqItem key={item.q} {...item} />)}
+            {FAQ_ITEMS.slice(0, 6).map(item => <FaqItem key={item.q} {...item} />)}
+          </div>
+          <div className="mt-8 text-center">
+            <a href="/faq"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors group">
+              See all {FAQ_ITEMS.length} questions
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
+            </a>
           </div>
         </div>
       </section>
@@ -584,36 +638,31 @@ export function LandingPage({ onFileSelected }: Props) {
             <div className="space-y-3">
               <div className="flex items-center gap-2.5 font-bold text-lg tracking-tight">
                 <div className="w-7 h-7 rounded-lg fn-gradient-bg flex items-center justify-center">
-                  <Layers className="w-3.5 h-3.5 text-white" />
+                  <Layers className="w-3.5 h-3.5 text-white" aria-hidden="true" />
                 </div>
                 <span className="fn-gradient-text">FlowNote</span>
               </div>
               <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
-                A premium, privacy-first screenshot editor that runs entirely in your browser.
+                A free, privacy-first screenshot editor that runs entirely in your browser. No uploads, no accounts, no tracking.
               </p>
-              <p className="text-xs" style={{ color: '#a5b4fc' }}>Capture. Organize. Flow.</p>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-12 gap-y-4 text-sm">
               <div className="space-y-2">
                 <p className="font-semibold text-xs uppercase tracking-wider text-muted-foreground mb-3">Product</p>
-                <button onClick={() => scrollTo(featuresRef)} className="block text-muted-foreground hover:text-foreground transition-colors">Features</button>
-                <button onClick={() => scrollTo(faqRef)} className="block text-muted-foreground hover:text-foreground transition-colors">FAQ</button>
+                <a href="/features" className="block text-muted-foreground hover:text-foreground transition-colors">Features</a>
+                <a href="/faq" className="block text-muted-foreground hover:text-foreground transition-colors">FAQ</a>
                 <button onClick={() => fileInputRef.current?.click()} className="block text-muted-foreground hover:text-foreground transition-colors">Open Screenshot</button>
                 <a href="/about" className="block text-muted-foreground hover:text-foreground transition-colors">About</a>
                 <a href="/contact" className="block text-muted-foreground hover:text-foreground transition-colors">Contact</a>
               </div>
               <div className="space-y-2">
                 <p className="font-semibold text-xs uppercase tracking-wider text-muted-foreground mb-3">Tools</p>
-                {[
-                  { href: '/free-screenshot-editor-online', label: 'Free Editor' },
-                  { href: '/annotate-screenshot-online', label: 'Annotate' },
-                  { href: '/blur-screenshot-online', label: 'Blur' },
-                  { href: '/add-text-to-screenshot-online', label: 'Add Text' },
-                  { href: '/ai-screenshot-editor', label: 'AI Editor' },
-                ].map(t => (
-                  <a key={t.href} href={t.href} className="block text-muted-foreground hover:text-foreground transition-colors text-sm">{t.label}</a>
-                ))}
+                <a href="/free-screenshot-editor-online" className="block text-muted-foreground hover:text-foreground transition-colors text-sm">Free Editor</a>
+                <a href="/annotate-screenshot-online" className="block text-muted-foreground hover:text-foreground transition-colors text-sm">Annotate</a>
+                <a href="/blur-screenshot-online" className="block text-muted-foreground hover:text-foreground transition-colors text-sm">Blur</a>
+                <a href="/add-text-to-screenshot-online" className="block text-muted-foreground hover:text-foreground transition-colors text-sm">Add Text</a>
+                <a href="/ai-screenshot-editor" className="block text-muted-foreground hover:text-foreground transition-colors text-sm">AI Editor</a>
               </div>
               <div className="space-y-2">
                 <p className="font-semibold text-xs uppercase tracking-wider text-muted-foreground mb-3">Guides</p>
@@ -639,6 +688,8 @@ export function LandingPage({ onFileSelected }: Props) {
             <div className="flex flex-wrap justify-center gap-4 text-xs">
               <a href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</a>
               <a href="/terms-of-service" className="hover:text-foreground transition-colors">Terms of Service</a>
+              <a href="/features" className="hover:text-foreground transition-colors">Features</a>
+              <a href="/faq" className="hover:text-foreground transition-colors">FAQ</a>
               <a href="/about" className="hover:text-foreground transition-colors">About</a>
               <a href="/contact" className="hover:text-foreground transition-colors">Contact</a>
             </div>

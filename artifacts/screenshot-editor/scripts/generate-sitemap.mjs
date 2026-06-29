@@ -13,7 +13,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 const BASE = 'https://useflownote.online';
 const TODAY = new Date().toISOString().split('T')[0];
-const RECENT = '2025-05-15';
+const RECENT = '2026-06-29';
 
 // ─── Route definitions (mirrors src/data/routes-config.ts) ──────────────────
 // Kept as plain JS so the script has zero TS/bundler dependencies.
@@ -21,6 +21,10 @@ const RECENT = '2025-05-15';
 const ROUTES = [
   // HOMEPAGE
   { slug: '', priority: 1.0, changeFreq: 'daily', lastMod: TODAY },
+
+  // STANDALONE PAGES (FAQ + Features)
+  { slug: 'faq', priority: 0.9, changeFreq: 'weekly', lastMod: TODAY },
+  { slug: 'features', priority: 0.9, changeFreq: 'weekly', lastMod: TODAY },
 
   // LEGAL & INFORMATIONAL PAGES
   { slug: 'about', priority: 0.8, changeFreq: 'monthly', lastMod: TODAY },

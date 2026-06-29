@@ -23,6 +23,8 @@ import Disclaimer from "@/pages/legal/Disclaimer";
 import CookiePolicy from "@/pages/legal/CookiePolicy";
 import ContactPage from "@/pages/legal/ContactPage";
 import AboutPage from "@/pages/legal/AboutPage";
+import FaqPage from "@/pages/FaqPage";
+import FeaturesPage from "@/pages/FeaturesPage";
 import GuidesIndex from "@/pages/guides/GuidesIndex";
 import HowToEditScreenshots from "@/pages/guides/HowToEditScreenshots";
 import HowToAnnotateScreenshots from "@/pages/guides/HowToAnnotateScreenshots";
@@ -41,6 +43,9 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={EditorPage} />
+      {/* ── Standalone pages ── */}
+      <Route path="/faq" component={FaqPage} />
+      <Route path="/features" component={FeaturesPage} />
       {/* ── Legal & informational pages ── */}
       <Route path="/about" component={AboutPage} />
       <Route path="/contact" component={ContactPage} />
